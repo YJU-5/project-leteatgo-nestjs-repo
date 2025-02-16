@@ -1,5 +1,6 @@
 import { User } from "src/user/entities/user.entity";
-import { Column, Entity, ManyToOne, PrimaryColumn, CreateDateColumn, JoinColumn } from "typeorm";
+import { Restaurant } from 'src/restaurant/entities/restaurant.entity';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn, CreateDateColumn, JoinColumn } from "typeorm";
 
 @Entity()
 export class ChatRoom {
@@ -73,5 +74,8 @@ export class ChatRoom {
     @Column({type:'tinyint',default:1,name:'is_active'})
     isActive:number
 
+    // Restaurant와 조인
+    @OneToMany(() => Restaurant, (restaurant) => restaurant.chatRoom)
+    restaurants: Restaurant[];
 
 }

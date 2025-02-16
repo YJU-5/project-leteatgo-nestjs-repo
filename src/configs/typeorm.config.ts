@@ -3,7 +3,7 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 export const typeOrmModuleOptions: TypeOrmModuleOptions = {
   type: 'postgres', // postgres db를 명시
   host: 'postgres_db', // postgres host
-  port: 5432, // postgres port
+  port: 5433, // postgres port
   username: 'root', // db username
   password: '1234', // db password
   database: 'project_5team', // database name

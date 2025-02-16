@@ -1,4 +1,9 @@
 import { ChatRoom } from "src/chat-room/entities/chat-room.entity";
+import { Board } from "src/board/entities/board.entity"; // Board 엔티티 import 추가
+import { Like } from 'src/like/entities/like.entity';
+import { Comment } from 'src/comment/entities/comment.entity';
+import { Subscription } from 'src/subscription/entities/subscription.entity';
+import { Notification } from 'src/notification/entities/notification.entity';
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn } from "typeorm";
 @Entity()
 export class User {
@@ -58,4 +63,28 @@ export class User {
     // ChatRoom과 조인 
     @OneToMany(()=>ChatRoom,(chatRoom) => chatRoom.hostId)
     chatRooms:ChatRoom[];
+
+    // Board와 조인
+    @OneToMany(() => Board, (board) => board.user)
+    boards: Board[];
+
+    // Like와 조인
+    @OneToMany(() => Like, (like) => like.user)
+    likes: Like[];
+
+    // Comment와 조인
+    @OneToMany(() => Comment, (comment) => comment.user)
+    comments: Comment[];
+
+    // 내가 구독한 유저들
+    @OneToMany(() => Subscription, (subscription) => subscription.subscriber)
+    subscriptions: Subscription[];
+
+    // 나를 구독한 유저들
+    @OneToMany(() => Subscription, (subscription) => subscription.subscribedUser)
+    subscribers: Subscription[];
+
+    // Notification과 조인
+    @OneToMany(() => Notification, (notification) => notification.user)
+    notifications: Notification[];
 }
