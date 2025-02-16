@@ -1,5 +1,11 @@
+import { Category } from "src/category/entities/category.entity";
+import { ChatParticipant } from "src/chat-participant/entities/chat-participant.entity";
+import { Message } from "src/message/entities/message.entity";
+import { Review } from "src/review/entities/review.entity";
+import { Tag } from "src/tag/entities/tag.entity";
+import { UserChatRoom } from "src/user-chat-room/entities/user-chat-room.entity";
 import { User } from "src/user/entities/user.entity";
-import { Column, Entity, ManyToOne, PrimaryColumn, CreateDateColumn, JoinColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryColumn, CreateDateColumn, JoinColumn, OneToMany, ManyToMany } from "typeorm";
 
 @Entity()
 export class ChatRoom {
@@ -12,6 +18,10 @@ export class ChatRoom {
     @ManyToOne(()=>User,(users)=> users.chatRooms,{onDelete:'CASCADE'})
     @JoinColumn({name:'host_id'})
     hostId:User;
+
+    // Review와 조인 
+    @OneToMany(()=> Review, (review) => review.chatRoom)
+    reviews: Review[]
 
     // 소셜다이닝 제목 
     @Column()
@@ -73,5 +83,23 @@ export class ChatRoom {
     @Column({type:'tinyint',default:1,name:'is_active'})
     isActive:number
 
+    // 메세지와 chatRoom 조인 
+    @OneToMany(()=> Message,(message) => message.chatRoomId)
+    messages:Message[]
 
+    // 유저 채팅 룸 (유저와 채팅룸의 중간테이블) 과 조인
+    @OneToMany(()=> UserChatRoom, (userChatRoom) => userChatRoom.chatRoomId)
+    userChatRooms:UserChatRoom[]
+
+    // 카테고리와 chatRoom의 중간테이블 생성 관계 
+    @ManyToMany(()=> Category, (category) => category.chatRooms)
+    categories: Category[];
+
+    // 태그와 chatRoom의 중간테이블 생성 관계  
+    @ManyToMany(()=> Tag, (tag) => tag.chatRooms)
+    tags: Tag[]
+
+    // ChatParticipant와 조인 
+    @OneToMany(()=> ChatParticipant,(chatParticipant) => chatParticipant.chatRoomId)
+    chatParticipants: ChatParticipant[]
 }

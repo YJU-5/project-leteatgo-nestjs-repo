@@ -1,4 +1,8 @@
+import { ChatParticipant } from "src/chat-participant/entities/chat-participant.entity";
 import { ChatRoom } from "src/chat-room/entities/chat-room.entity";
+import { Message } from "src/message/entities/message.entity";
+import { Review } from "src/review/entities/review.entity";
+import { UserChatRoom } from "src/user-chat-room/entities/user-chat-room.entity";
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn } from "typeorm";
 @Entity()
 export class User {
@@ -55,7 +59,31 @@ export class User {
     @CreateDateColumn({name:'updated_at'})
     updatedAt:Date;
 
+    // 유저 비활성화(탈퇴)
+    @Column({default: false})
+    deleted:boolean
+
+    // UserChatRoom과 조인 
+    @OneToMany(()=>UserChatRoom,(userChatRoom) => userChatRoom.userId)
+    userChatRooms: UserChatRoom[];
+
     // ChatRoom과 조인 
     @OneToMany(()=>ChatRoom,(chatRoom) => chatRoom.hostId)
     chatRooms:ChatRoom[];
+
+    // review와 조인 (평가한 유저)
+    @OneToMany(()=>Review, (review) => review.reviewer)
+    givenReviews : Review[]
+    
+    // review와 조인 (평가받은 유저)
+    @OneToMany(()=>Review, (review) => review.reviewee)
+    receivedReviews: Review[]
+
+    // message와 조인 
+    @OneToMany(()=>Message, (message)=> message.userId)
+    messages: Message[]
+
+    // ChatParticipant와 조인 
+    @OneToMany(()=>ChatParticipant,(chatParticipant) => chatParticipant.userId)
+    chatParticipants:ChatParticipant
 }
