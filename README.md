@@ -61,6 +61,15 @@
 
 ---
 
+## 🔀 Merge 브랜치 (병합 브랜치)
+- **형식:** `merge/병합-설명`
+- **예시:**
+  - `merge/feature-user-auth  → 여러 기능 브랜치 병합`
+  - `merge/bugfix-auth-errors → 여러 버그 픽스 병합`
+  - `merge/hotfix-security-patch → 긴급 수정 병합`
+
+---
+
 📌 **규칙을 지켜 브랜치를 생성하면 협업이 더 원활해집니다! 🚀**
 
 <!-- <p align="center">
