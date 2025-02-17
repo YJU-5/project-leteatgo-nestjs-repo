@@ -24,7 +24,7 @@ export class Board {
     title: string;
 
     // 내용
-    @Column({ type: 'varchar', length: 255, nullable: false })
+    @Column({ type: 'text', nullable: false })
     content: string;
 
     // 좋아요 개수 (기본값 0)
