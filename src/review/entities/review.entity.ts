@@ -33,23 +33,23 @@ export class Review {
     pictureUrl:string;
 
     // 친절함 
-    @Column({type:'tinyint'})
+    @Column({type:'smallint'})
     kindness:number
 
     // 유머 
-    @Column({type:'tinyint'})
+    @Column({type:'smallint'})
     humor:number
 
     // 적극성 
-    @Column({type:'tinyint'})
+    @Column({type:'smallint'})
     activeness:number
 
     // 요리 
-    @Column({type:'tinyint'})
+    @Column({type:'smallint'})
     cook:number
 
     // 약속준수 
-    @Column({type:'tinyint'})
+    @Column({type:'smallint'})
     compliance:number
 
     // 평가 생성 시간 
@@ -61,6 +61,6 @@ export class Review {
     updatedAt:Date; 
 
     // 리뷰 활성화 여부
-    @Column({type:'tinyint',default:1,name:'is_active'})
+    @Column({type:'smallint',default:1,name:'is_active'})
     isActive:number 
 }

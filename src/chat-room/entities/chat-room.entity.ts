@@ -80,7 +80,7 @@ export class ChatRoom {
     updatedAt:Date;
 
     // 활성화 여부 
-    @Column({type:'tinyint',default:1,name:'is_active'})
+    @Column({type:'smallint',default:1,name:'is_active'})
     isActive:number
 
     // 메세지와 chatRoom 조인 
