@@ -21,7 +21,7 @@ export class Notification {
     description: string;
 
     // 알림 읽음 여부 (0 = 안 읽음, 1 = 읽음)
-    @Column({ type: 'tinyint', default: 0 })
+    @Column({ type: 'smallint', default: 0 })
     read: number;
 
     // 생성 날짜 
