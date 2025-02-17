@@ -25,8 +25,7 @@ async function bootstrap() {
   
   //Cors
   app.enableCors();
-  
-  
+
   await app.listen(process.env.PORT ?? 3001);
 }
 bootstrap();
