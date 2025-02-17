@@ -5,7 +5,7 @@ import { Review } from "src/review/entities/review.entity";
 import { Tag } from "src/tag/entities/tag.entity";
 import { UserChatRoom } from "src/user-chat-room/entities/user-chat-room.entity";
 import { User } from "src/user/entities/user.entity";
-import { Column, Entity, ManyToOne, PrimaryColumn, CreateDateColumn, JoinColumn, OneToMany, ManyToMany } from "typeorm";
+import { Column,UpdateDateColumn, Entity, ManyToOne, PrimaryColumn, CreateDateColumn, JoinColumn, OneToMany, ManyToMany } from "typeorm";
 
 @Entity()
 export class ChatRoom {
@@ -28,7 +28,7 @@ export class ChatRoom {
     title:string;
 
     // 소셜다이닝 설명 
-    @Column()
+    @Column({type:'text'})
     description:string;
 
     // 소셜다이닝 상태 
@@ -76,7 +76,7 @@ export class ChatRoom {
     createdAt: Date;
 
     // 수정날짜
-    @CreateDateColumn({name:'updated_at'})
+    @UpdateDateColumn({name:'updated_at'})
     updatedAt:Date;
 
     // 활성화 여부 

@@ -20,7 +20,7 @@ export class Message {
     userId : User
 
     // 내용 
-    @Column()
+    @Column({type:'text'})
     message: string
 
     // 사진 

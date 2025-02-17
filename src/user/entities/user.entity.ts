@@ -3,7 +3,7 @@ import { ChatRoom } from "src/chat-room/entities/chat-room.entity";
 import { Message } from "src/message/entities/message.entity";
 import { Review } from "src/review/entities/review.entity";
 import { UserChatRoom } from "src/user-chat-room/entities/user-chat-room.entity";
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn, UpdateDateColumn } from "typeorm";
 @Entity()
 export class User {
 
@@ -12,15 +12,15 @@ export class User {
     id:string;
 
     // 이름
-    @Column()
+    @Column({type:'varchar', length:50})
     name:string;
 
     // 이메일 
-    @Column()
+    @Column({type:'varchar', length:320})
     email:string;
 
     // 전화번호 
-    @Column({name:'phone_number'}) //스네이크 컬럼명 매핑
+    @Column({type:'varchar',length:30,name:'phone_number'}) //스네이크 컬럼명 매핑
     phoneNumber:string;
 
     // 생년월일 
@@ -36,7 +36,7 @@ export class User {
     pictureUrl:string;
 
     // 소개문 
-    @Column({nullable:true})
+    @Column({type:'text',nullable:true})
     description:string;
 
     // 유저역할 
@@ -56,7 +56,7 @@ export class User {
     createdAt: Date;
 
     // 수정날짜
-    @CreateDateColumn({name:'updated_at'})
+    @UpdateDateColumn({name:'updated_at'})
     updatedAt:Date;
 
     // 유저 비활성화(탈퇴)

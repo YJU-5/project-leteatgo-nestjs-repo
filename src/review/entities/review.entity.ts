@@ -1,6 +1,6 @@
 import { ChatRoom } from "src/chat-room/entities/chat-room.entity";
 import { User } from "src/user/entities/user.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, CreateDateColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class Review {
@@ -25,7 +25,7 @@ export class Review {
     reviewee : User;
     
     // 평가내용 
-    @Column()
+    @Column({type:'text'})
     description:string
 
     // 사진 
@@ -57,7 +57,7 @@ export class Review {
     createdAt: Date;
 
     // 평가 수정 시간
-    @CreateDateColumn({name:'updated_at'})
+    @UpdateDateColumn({name:'updated_at'})
     updatedAt:Date; 
 
     // 리뷰 활성화 여부
