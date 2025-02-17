@@ -6,6 +6,7 @@ import { Tag } from "src/tag/entities/tag.entity";
 import { UserChatRoom } from "src/user-chat-room/entities/user-chat-room.entity";
 import { User } from "src/user/entities/user.entity";
 import { Column,UpdateDateColumn, Entity, ManyToOne, PrimaryColumn, CreateDateColumn, JoinColumn, OneToMany, ManyToMany } from "typeorm";
+import { Restaurant } from 'src/restaurant/entities/restaurant.entity';
 
 @Entity()
 export class ChatRoom {
@@ -102,4 +103,8 @@ export class ChatRoom {
     // ChatParticipant와 조인 
     @OneToMany(()=> ChatParticipant,(chatParticipant) => chatParticipant.chatRoomId)
     chatParticipants: ChatParticipant[]
+
+    // Restaurant와 조인
+    @OneToMany(() => Restaurant, (restaurant) => restaurant.chatRoom)
+    restaurants: Restaurant[];
 }
