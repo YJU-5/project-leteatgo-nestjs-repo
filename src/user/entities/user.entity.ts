@@ -45,11 +45,11 @@ export class User {
     description:string;
 
     // 유저역할 
-    @Column('enum',{enum:['user','admin']})
+    @Column('enum',{enum:['USER','ADMIN']})
     role:string;
 
     // 소셜로그인 제공자 
-    @Column('enum',{enum:['GOOGLE','KAKAO','INSTAGRAM'],name:'social_provider'})
+    @Column('enum',{enum:['GOOGLE','KAKAO'],name:'social_provider'})
     socialProvider:string;
 
     // 소셜로그인 고유ID
