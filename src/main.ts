@@ -1,4 +1,4 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -27,7 +27,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, documentFactory);
 
   // JWT 전역가드 설정 
-  // app.useGlobalGuards(new JwtAuthGuard())
+  app.useGlobalGuards(new JwtAuthGuard(new Reflector()))
   
   //Cors
   app.enableCors();

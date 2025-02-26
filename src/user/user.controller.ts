@@ -6,6 +6,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { firstValueFrom } from 'rxjs';
 import { KakaoStrategy } from 'src/auth/kakao.strategy';
+import { Public } from 'src/decorator/public.decorator';
+import { RequestWithUser } from './request.interface';
 
 @Controller('user')
 export class UserController {
@@ -15,55 +17,51 @@ export class UserController {
 
   // ## 구글로그인 ##
   @Get('google/login')
+  @Public()
   @UseGuards(AuthGuard('google'))
   async googleLogin(@Req() req:Request){}
 
   // ## 구글로그인 리다이렉션 ##
   @Get('google/login/callback')
+  @Public()
   @UseGuards(AuthGuard('google'))
   googleLoginCallback(@Req() req:Request) {
     return this.userService.googleLogin(req)
   }
 
+  // ## 카카오 로그인 ## 
   @Post('kakao/login')
+  @Public()
   async kakaoLogin(@Body() body:{access_token:string} ){
     const user = await this.kakaoStrategy.validateKakaoUser(body.access_token)
-    // 2025-02-24 17:59:58 {
-    //   2025-02-24 17:59:58   socialId: 3935329477,
-    //   2025-02-24 17:59:58   name: '김형선',
-    //   2025-02-24 17:59:58   email: 'gudtjs1004sd@gmail.com',
-    //   2025-02-24 17:59:58   photo: 'http://k.kakaocdn.net/dn/WKHys/btsI7cvS6Od/EHWwMjr623ikm7TarwbjIK/img_640x640.jpg',
-    //   2025-02-24 17:59:58   phone_number: '+82 10-3727-0989',
-    //   2025-02-24 17:59:58   provider: 'KAKAO',
-    //   2025-02-24 17:59:58   gender: 'male',
-    //   2025-02-24 17:59:58   birthday: '19981008'
-    //   2025-02-24 17:59:58 }
-    this.userService.kakaoLogin(user)
+    return await this.userService.kakaoLogin(user)
+  }
+
+  // 유저 탈퇴(비활성화) ## 
+  @Patch()
+  async deactivateUser(@Req() req:RequestWithUser){
+    const socialId = req.user.socialId
+    return await this.userService.deactivateUser(socialId)
   }
   
-
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  // 유저 복구(활성화)
+  @Patch('/restore')
+  async restoreUser(@Req() req:RequestWithUser){
+    const socialId = req.user.socialId
+    return this.userService.restoreUser(socialId)
   }
 
+  // 본인 회원 정보 조회 
   @Get()
-  findAll() {
-    return this.userService.findAll();
+  async getProfile(@Req() req:RequestWithUser) {
+    const socialId = req.user.socialId
+    return this.userService.getProfile(socialId)
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  // 회원 정보 수정 
+  @Patch()
+  async updateProfile(@Req() req:RequestWithUser){
+    const socialId = req.user.socialId
+    return this.userService.updateProfile(socialId)
   }
 }

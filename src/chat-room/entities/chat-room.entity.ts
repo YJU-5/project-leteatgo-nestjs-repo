@@ -5,14 +5,14 @@ import { Review } from "src/review/entities/review.entity";
 import { Tag } from "src/tag/entities/tag.entity";
 import { UserChatRoom } from "src/user-chat-room/entities/user-chat-room.entity";
 import { User } from "src/user/entities/user.entity";
-import { Column,UpdateDateColumn, Entity, ManyToOne, PrimaryColumn, CreateDateColumn, JoinColumn, OneToMany, ManyToMany } from "typeorm";
+import { Column,UpdateDateColumn, Entity, ManyToOne, PrimaryColumn,PrimaryGeneratedColumn, CreateDateColumn, JoinColumn, OneToMany, ManyToMany } from "typeorm";
 import { Restaurant } from 'src/restaurant/entities/restaurant.entity';
 
 @Entity()
 export class ChatRoom {
 
     // 채팅방 아이디
-    @PrimaryColumn('uuid')
+    @PrimaryGeneratedColumn('uuid')
     id:string;
 
     // 개최자 아이디 (User와 조인인)

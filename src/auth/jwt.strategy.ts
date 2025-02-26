@@ -8,7 +8,7 @@ dotenv.config();
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy){
-    constructor(private readonly){
+    constructor(){
         super({
             jwtFromRequest:ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration:false,
@@ -17,6 +17,6 @@ export class JwtStrategy extends PassportStrategy(Strategy){
     }
     async validate(payload:any){
         // jwt에서 전역으로 정보를 받아서 어떻게 보내줄지 
-        return{email : payload.email, name: payload.name, socialId:payload.socialId}
+        return{email:payload.email, name: payload.name, socialId:String(payload.socialId)}
     }
 }

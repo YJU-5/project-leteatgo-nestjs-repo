@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,9 +17,10 @@ export class UserService {
   // 소셜 회원가입 
   // # 구글로그인, 회원가입 # 
   async googleLogin(req) {
-    const findUser = await this.userRepository.findOneBy({socialId:req.user.socialId})
-    // 회원가입이 되어있는 경우 로그인 
-    if(findUser){
+    const findDeletedUser = await this.userRepository.findOneBy({socialId:req.user.socialId,deleted:true})
+    const findUser = await this.userRepository.findOneBy({socialId:req.user.socialId, deleted:false})
+    
+    if(findUser){ 
       try{
         // JWT 토큰 발급
         const googleJwtToken = this.authService.googleLogin(req)
@@ -27,36 +28,40 @@ export class UserService {
       }catch{
         throw new UnauthorizedException('로그인 실패');
       }
-
-    }else{ // 안되어있는 경우 createUser 후 토큰발급 
-
+    // 비활성화유저도 일반유저도 아닌경우 회원가입 실시
+    }else{
     // 생일 날짜 변환 함수
     function convertBirthdayToDate(birthday: { year: number; month: number; day: number }): Date {
       const { year, month, day } = birthday;
       return new Date(`${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
     }
+    // 성별 변환 
+    function convertGender(gender:string):string{
+      return gender.charAt(0).toUpperCase()
+    }
+    const convertedGender = convertGender(req.user.gender)
     const formattedBirtday = convertBirthdayToDate(req.user.birthday)
-    console.log('formattedBirtday',formattedBirtday);
 
     const newUser = this.userRepository.create({
+      socialId:String(req.user.socialId),
       name: req.user.name, // 이름 
       email: req.user.email, // 이메일 
       pictureUrl: req.user.photo, // 사진
       birthday: formattedBirtday, // 생년월일 
-      gender: req.user.gender, // 성별 
+      gender: convertedGender, // 성별 
       socialProvider:req.user.provider, // 제공자 
       role: 'USER', // 역할 
     })
-    // const saveUser = await this.userRepository.save(newUser)
+    const saveUser = await this.userRepository.save(newUser) // 실제 생성성
     const googleJwtToken = this.authService.googleLogin(req)
     return googleJwtToken
     }
   }
 
-  // 카카오 로그인, 회원가입 
+  // 카카오 로그인, 회원가입 // 만약 카카오톡에서 정보를 수정해도 수정한 값 그대로 들어가기 
   async kakaoLogin(user){
-    const findUser = await this.userRepository.findOneBy({socialId:user.socialId})
-    // 회원가입이 되어있는 경우 로그인 
+    const findDeletedUser = await this.userRepository.findOneBy({socialId:user.socialId,deleted:true})
+    const findUser = await this.userRepository.findOneBy({socialId:user.socialId, deleted:false})
     if(findUser){
       try{
         // JWT 토큰 발급
@@ -65,6 +70,7 @@ export class UserService {
       }catch{
         throw new UnauthorizedException('로그인 실패');
       }
+    // 비활성화유저도 일반유저도 아닌경우 회원가입 실시
     }else{
 
       // 생년월일 변환 
@@ -75,44 +81,47 @@ export class UserService {
       function convertPhoneNumber(phoneNumber:string):string{
         return '0'+phoneNumber.slice(4)
       }
+      // 성별 변환 
+      function convertGender(gender:string):string{
+        return gender.charAt(0).toUpperCase()
+      }
       const convertedPhoneNumber = convertPhoneNumber(user.phone_number)
-
+      const convertedGender = convertGender(user.gender)
       // 안되어있는 경우 createUser후 토큰 발급 
       // 생일 날짜 변환 
       const newUser = this.userRepository.create({
+        socialId:String(user.socialId),
         name:user.name, // 이름
         email:user.email, // 이메일 
         pictureUrl:user.photo, // 사진
         birthday:birthday, // 생년월일 
         phoneNumber:convertedPhoneNumber, // 휴대폰 번호
-        gender:user.gender,
+        gender:convertedGender,
         socialProvider:user.provider,
         role:'USER'
       })
-      // const saveUser = await this.userRepository.save(newUser)
+      const saveUser = await this.userRepository.save(newUser) // 실제 생성
       const kakaoJwtToken = this.authService.kakaoLogin(user)
       return kakaoJwtToken
     }
   }
-
-
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  // 본인 회원 정보 조회 
+  async getProfile(socialId:string){
+    return await this.userRepository.findOne({where:{socialId:socialId}})
   }
 
-  findAll() {
-    return `This action returns all user`;
+  // 회원 탈퇴(비활성화)
+  async deactivateUser(socialId:string){
+    return await this.userRepository.update(socialId,{deleted:true})
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  // 회원 복구(활성화)
+  async restoreUser(socialId:string){
+    return await this.userRepository.update(socialId,{deleted:false})
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  // 회원 정보 수정 // dto 참고, swagger로 해보기  
+  async updateProfile(socialId:string){
+    const userProfile = this.userRepository.findOneBy({socialId:socialId})
   }
 }

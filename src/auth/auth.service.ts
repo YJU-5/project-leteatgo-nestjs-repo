@@ -14,9 +14,9 @@ export class AuthService {
 
   // # 구글로그인, JWT 발급 #
   async googleLogin(req){
-    const {email, name, socialId} = req.user
+    const {email, name, socialId, deleted} = req.user
 
-    const googlePayload = {email, name, socialId}
+    const googlePayload = {email, name, socialId, deleted}
 
     const googleJwt ={
       token: this.jwtService.sign(googlePayload,{
