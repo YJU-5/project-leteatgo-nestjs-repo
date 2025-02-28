@@ -25,7 +25,7 @@ export class UserController {
 
   ) {}
 
-  // ## 구글로그인 ##
+  // ## 구글로그인 ## ## TEST
   @Post('google/login')
   @ApiOperationDecorator('구글 로그인','# 구글 로그인',201,'성공적 로그인 완료')
   @ApiLoginBody()
