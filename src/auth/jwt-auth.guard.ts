@@ -28,7 +28,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   handleRequest(err: any, user: any, info: any, context: ExecutionContext) {
     if(err || !user){
       // 인증 실패 시 처리 
-      throw err || new Error('인증 실패')
+      throw err || new Error('JWT 인증 실패')
     }
     return user
   }

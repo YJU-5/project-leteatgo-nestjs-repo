@@ -1,58 +1,42 @@
-
-import { Injectable } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
-import { Strategy } from 'passport-google-oauth20';
-import { VerifiedCallback } from 'passport-jwt';
-import * as dotenv from 'dotenv';
-
-dotenv.config(); // .env 파일을 로드
+import { Injectable } from "@nestjs/common";
+import axios from "axios";
 
 @Injectable()
-export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-  constructor() {
-    super({
-        clientID:process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: 'http://localhost:3001/user/google/login/callback',
-        scope: [
-          'email', 
-          'profile',
-          'https://www.googleapis.com/auth/userinfo.profile',
-          'https://www.googleapis.com/auth/user.birthday.read',
-          'https://www.googleapis.com/auth/user.gender.read',
-          ],
-    });
-  }
+export class GoogleStrategy{
+    async validateGoogleUser(accessToken:string){
 
-  async validate(accessToken: string, refreshToken: string, profile: any, done:VerifiedCallback): Promise<any> {
-    // profile 객체에서 소셜 로그인 고유 ID를 추출
-    // 필요 : 휴대폰 번호를 받으려면 앱 검수를 실시하여야함
-    // https://developers.google.com/identity/protocols/oauth2/production-readiness/brand-verification?hl=ko : 앱검수 
-    try{
-      const { id, displayName, emails, photos  } = profile;
+        // 구글API도 똑같이 요청하기
+        try{
+            const response = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo',{
+                headers:{
+                    Authorization: `Bearer ${accessToken}`,
+                }
+            })
+            const googleResponse = response.data
 
-      const response = await fetch("https://people.googleapis.com/v1/people/me?personFields=birthdays,genders,phoneNumbers", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${accessToken}` // 여기에 액세스 토큰 사용
+            const responseGooglePeople = await axios.get('https://people.googleapis.com/v1/people/me?personFields=birthdays,genders,phoneNumbers',{
+                headers:{
+                    Authorization: `Bearer ${accessToken}`,
+                }
+            })
+
+            const {genders, birthdays} = responseGooglePeople.data
+
+            const user ={
+                socialId: googleResponse.sub,
+                name: googleResponse.name,
+                email: googleResponse.email,
+                photo:googleResponse.picture,
+                provider:'GOOGLE',
+                gender: genders?.[0].value || null,
+                birthday: birthdays?.[0]?.date || null,
+            }
+
+            return user
+        }catch(error){
+            console.log(error);     
+            throw new Error('구글 로그인 정보를 가져오는데 실패했습니다');
+
         }
-      });
-      const data = await response.json();
-
-      const user = {
-        socialId: id,
-        name: displayName,
-        email: emails[0].value,
-        photo:photos[0].value,
-        provider:'GOOGLE',
-        gender: data.genders?.[0].value || null,
-        birthday: data.birthdays?.[0]?.date || null,
-      }
-
-      done(null,user)
-
-    }catch(error){
-      throw error
     }
-  }
 }

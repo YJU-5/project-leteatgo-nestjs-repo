@@ -23,7 +23,7 @@ export class KakaoStrategy{
             return user
         }catch (error){
             console.log(error);
-            throw new Error('카카오 로그인 정보를 가져오는데 실패했습니다다');
+            throw new Error('카카오 로그인 정보를 가져오는데 실패했습니다');
         }
     }
 }

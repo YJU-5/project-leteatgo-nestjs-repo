@@ -9,4 +9,8 @@
 # 수정 : 본문, 사진, 전화번호, 이름, 주소, 
 # 복구요청 : 로그인을 하고 이 계정이 비활성화되어있으니 거기서 복구요청하기
 
-token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imd1ZHRqczEwMDRzZEBnbWFpbC5jb20iLCJuYW1lIjoi6rmA7ZiV7ISgIiwic29jaWFsSWQiOjM5MzUzMjk0NzcsImlhdCI6MTc0MDU1NzIyMywiZXhwIjoxNzQwODU5NjIzfQ.t8Y5-EJP7s8GYcckifWA-vQBCVSFO4z4DdM6xP43e_w'
+sudo chown -R $USER:$USER /home/jit/LetEatGo/backend/node_modules
+
+jwt : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imd1ZHRqczEwMDRzZEBnbWFpbC5jb20iLCJuYW1lIjoi6rmA7ZiV7ISgIiwic29jaWFsSWQiOjM5MzUzMjk0NzcsImlhdCI6MTc0MDYzNzI5NiwiZXhwIjoxNzQwOTM5Njk2fQ.XDtG1coyJCiWtGL93mpR-1kU3Zjyk_nfMn3RNwgDwUA
+
+https://www.googleapis.com/oauth2/v3/userinfo

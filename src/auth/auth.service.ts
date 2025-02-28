@@ -13,8 +13,8 @@ export class AuthService {
   ){}
 
   // # 구글로그인, JWT 발급 #
-  async googleLogin(req){
-    const {email, name, socialId, deleted} = req.user
+  async googleLogin(user){
+    const {email, name, socialId, deleted} = user
 
     const googlePayload = {email, name, socialId, deleted}
 
@@ -28,9 +28,9 @@ export class AuthService {
   }
 
   async kakaoLogin(user){
-    const {email, name, socialId} = user 
+    const {email, name, socialId, deleted} = user 
 
-    const kakaoPayload = {email, name, socialId}
+    const kakaoPayload = {email, name, socialId, deleted}
 
     const kakaoJwt ={
       token : this.jwtService.sign(kakaoPayload,{
