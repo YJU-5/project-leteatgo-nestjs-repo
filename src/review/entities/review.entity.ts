@@ -1,12 +1,12 @@
 import { ChatRoom } from "src/chat-room/entities/chat-room.entity";
 import { User } from "src/user/entities/user.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class Review {
 
     // 리뷰아이디 
-    @PrimaryColumn('uuid')
+    @PrimaryGeneratedColumn('uuid')
     id:string;
 
     // 채팅방아이디 (chat-room과 조인인)
