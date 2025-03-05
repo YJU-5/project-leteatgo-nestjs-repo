@@ -1,15 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common';
 import { ChatRoomService } from './chat-room.service';
 import { CreateChatRoomDto } from './dto/create-chat-room.dto';
 import { UpdateChatRoomDto } from './dto/update-chat-room.dto';
+import { RequestWithUser } from 'src/user/request.interface';
+import { userInfo } from 'os';
 
 @Controller('chat-room')
 export class ChatRoomController {
   constructor(private readonly chatRoomService: ChatRoomService) {}
 
   @Post()
-  create(@Body() createChatRoomDto: CreateChatRoomDto) {
-    return this.chatRoomService.create(createChatRoomDto);
+  createChatRoom(
+    @Req() req:RequestWithUser,
+    @Body() createChatRoomDto: CreateChatRoomDto
+  ) {
+    const socialId = req.user.socialId
+    return this.chatRoomService.createChatRoom(createChatRoomDto, socialId);
   }
 
   @Get()

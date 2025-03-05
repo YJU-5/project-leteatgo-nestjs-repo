@@ -68,9 +68,17 @@ export class ChatRoom {
     @Column({type:'decimal',precision:9, scale:6})
     longitude: number;
 
-    // 가격
+    // 주소이름
     @Column()
-    price:number
+    address:string
+    
+    // 최소 가격
+    @Column({name:'max_price'})
+    maxPrice:number
+
+    // 최대 가격  
+    @Column({name:'min_price'})
+    minPrice:number
 
     // 생성날짜
     @CreateDateColumn({name:'created_at'}) // 생성일시 자동 생성 

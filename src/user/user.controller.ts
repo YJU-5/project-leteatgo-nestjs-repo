@@ -69,6 +69,7 @@ export class UserController {
   @ApiBearerAuth()
   async getProfile(@Req() req:RequestWithUser) {
     const socialId = req.user.socialId
+    console.log(req.user);
     return this.userService.getProfile(socialId)
   }
 

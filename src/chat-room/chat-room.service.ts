@@ -4,7 +4,7 @@ import { UpdateChatRoomDto } from './dto/update-chat-room.dto';
 
 @Injectable()
 export class ChatRoomService {
-  create(createChatRoomDto: CreateChatRoomDto) {
+  createChatRoom(createChatRoomDto: CreateChatRoomDto , socialId) {
     return 'This action adds a new chatRoom';
   }
 
