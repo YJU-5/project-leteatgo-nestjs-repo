@@ -13,7 +13,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t leteatgoapi .
+          docker build -t leteatgoapi . --platform linux/amd64
 
       - name: Login to DockerHub
         uses: docker/login-action@v2
