@@ -10,5 +10,5 @@ export const typeOrmModuleOptions: TypeOrmModuleOptions = {
   password: process.env.DB_PASSWORD, // db password
   database: process.env.DB_DATABASE_NAME, // database name
   entities: [__dirname + '/../**/*.entity.{js,ts}'], // entity class를 기반으로 테이블을 생성할 수 있도록 entity 파일 규칙 정의
-  synchronize: false,
+  synchronize: true,
 };
