@@ -7,3 +7,9 @@
 sudo chown -R $USER:$USER /home/jit/LetEatGo/backend/node_modules
 
 # 웹소캣, 실시간채팅 학습
+emit : 메시지를 특정 이벤트 이름과 함께 전송하는 데 사용 (송신자에게 메시지를 보내는 방법)
+
+on : 특정 이벤트 이름을 수신하는 데 사용 
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imd1ZHRqczEwMDRzZEBnbWFpbC5jb20iLCJuYW1lIjoi6rmA7ZiV7ISgIiwic29jaWFsSWQiOiIzOTM1MzI5NDc3IiwiZGVsZXRlZCI6ZmFsc2UsImlhdCI6MTc0MjA5NTQ1NiwiZXhwIjoxNzQyMzk3ODU2fQ.RZ8KFE3SeyjLC2ijeFdgqzNNj6k2eeDMStQeRxQh6VM
+

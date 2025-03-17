@@ -14,5 +14,6 @@ import { GoogleStrategy } from 'src/auth/google.strategy';
   imports:[TypeOrmModule.forFeature([User]), AuthModule, S3Module],
   controllers: [UserController],
   providers: [UserService, KakaoStrategy, GoogleStrategy],
+  exports:[UserService]
 })
 export class UserModule {}

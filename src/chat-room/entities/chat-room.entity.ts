@@ -45,7 +45,7 @@ export class ChatRoom {
     maxParticipants:number;
 
     // 성별 
-    @Column('enum',{enum:['M','F']})
+    @Column('enum',{enum:['M','F','UNSPECIFIED']})
     gender:string;
 
     // 사진 

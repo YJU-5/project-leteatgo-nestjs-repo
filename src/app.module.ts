@@ -20,10 +20,11 @@ import { ChatParticipantModule } from './chat-participant/chat-participant.modul
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { S3Module } from './s3/s3.module';
+import { ChatRoomGateway } from './chat-room/chat-room.gateway';
 
 @Module({
   imports: [ConfigModule.forRoot({isGlobal:true}),TypeOrmModule.forRoot(typeOrmModuleOptions), UserModule, ChatRoomModule, ReviewModule, CategoryModule, TagModule, UserChatRoomModule, MessageModule, ChatParticipantModule,BoardModule, LikeModule, CommentModule, SubscriptionModule, NotificationModule, RestaurantModule, AuthModule, S3Module],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ChatRoomGateway],
 })
 export class AppModule {}

@@ -11,7 +11,7 @@ import { RequestWithUser } from './request.interface';
 import { ApiOperationDecorator } from 'src/decorator/api.operration.decorator';
 import { ApiLoginBody } from 'src/decorator/api.login.body.decorator';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { ApiLoginUpdate } from 'src/decorator/api.login.update';
+import { ApiLoginUpdate } from 'src/decorator/api.login.update.decorator';
 import { S3Service } from 'src/s3/s3.service';
 import { GoogleStrategy } from 'src/auth/google.strategy';
 
