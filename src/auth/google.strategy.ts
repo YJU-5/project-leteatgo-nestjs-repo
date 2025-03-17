@@ -26,7 +26,7 @@ export class GoogleStrategy{
                 socialId: googleResponse.sub,
                 name: googleResponse.name,
                 email: googleResponse.email,
-                photo:googleResponse.picture,
+                photo:googleResponse.picture || null,
                 provider:'GOOGLE',
                 gender: genders?.[0].value || null,
                 birthday: birthdays?.[0]?.date || null,

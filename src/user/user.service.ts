@@ -23,6 +23,7 @@ export class UserService {
         // JWT 토큰 발급
         const googleJwtToken = this.authService.googleLogin(findUser)
         console.log('login');
+        console.log(googleJwtToken);
         return googleJwtToken
       }catch{
         throw new UnauthorizedException('구글 로그인 실패');

@@ -11,7 +11,7 @@ import { RequestWithUser } from './request.interface';
 import { ApiOperationDecorator } from 'src/decorator/api.operration.decorator';
 import { ApiLoginBody } from 'src/decorator/api.login.body.decorator';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { ApiLoginUpdate } from 'src/decorator/api.login.update';
+import { ApiLoginUpdate } from 'src/decorator/api.login.update.decorator';
 import { S3Service } from 'src/s3/s3.service';
 import { GoogleStrategy } from 'src/auth/google.strategy';
 
@@ -25,7 +25,7 @@ export class UserController {
 
   ) {}
 
-  // ## 구글로그인 ##
+  // ## 구글로그인 ## ## TEST ##TEST
   @Post('google/login')
   @ApiOperationDecorator('구글 로그인','# 구글 로그인',201,'성공적 로그인 완료')
   @ApiLoginBody()
@@ -69,6 +69,7 @@ export class UserController {
   @ApiBearerAuth()
   async getProfile(@Req() req:RequestWithUser) {
     const socialId = req.user.socialId
+    console.log(req.user);
     return this.userService.getProfile(socialId)
   }
 
