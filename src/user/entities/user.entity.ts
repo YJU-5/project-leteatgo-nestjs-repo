@@ -3,13 +3,15 @@ import { ChatRoom } from "src/chat-room/entities/chat-room.entity";
 import { Message } from "src/message/entities/message.entity";
 import { Review } from "src/review/entities/review.entity";
 import { UserChatRoom } from "src/user-chat-room/entities/user-chat-room.entity";
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn, Unique } from "typeorm";
 import { Board } from "src/board/entities/board.entity"; // Board 엔티티 import 추가
 import { Like } from 'src/like/entities/like.entity';
 import { Comment } from 'src/comment/entities/comment.entity';
 import { Subscription } from 'src/subscription/entities/subscription.entity';
 import { Notification } from 'src/notification/entities/notification.entity';
+
 @Entity()
+@Unique(['socialId'])
 export class User {
 
     // 유저아이디
@@ -29,11 +31,11 @@ export class User {
     phoneNumber:string;
 
     // 생년월일 
-    @Column('date')
+    @Column('date',{nullable:true})
     birthday:Date;
 
     // 성별 
-    @Column('enum',{enum:['M','F']})
+    @Column('enum',{enum:['M','F'],nullable:true})
     gender:string;
 
     // 사진 

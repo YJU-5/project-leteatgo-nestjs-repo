@@ -80,4 +80,37 @@ export class UserChatRoomService {
       isActive:false
     })
   }
+
+
+  // 내가 개최한 채팅 목록 
+  // 여러개도 가능함?
+  async userChatRoomHosted(userId){
+    const hostChatList = await this.userChatRoomRepository.find({
+      where:{
+        userId:{id:userId},
+        role:'HOST'
+      },
+      relations:['userId','chatRoomId']
+    })
+
+    // chatRoomId 목록만 추출 
+    const chatRoomList = hostChatList.map(item=> item.chatRoomId)
+
+    return chatRoomList
+  }
+
+  // 내가 참가한 채팅 목록
+  async userChatRoomJoin(userId){
+  const userChatList = await this.userChatRoomRepository.find({
+    where:{
+      userId:{id:userId},
+      role:'USER',
+    },
+    relations:['userId','chatRoomId']
+  })
+  const chatRoomList = userChatList.map(item=> item.chatRoomId)
+
+  return chatRoomList
+  }
+
 }

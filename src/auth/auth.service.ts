@@ -38,6 +38,7 @@ export class AuthService {
         expiresIn: '84h',
       })
     } 
+    console.log(kakaoJwt)
     return kakaoJwt
   }
 
