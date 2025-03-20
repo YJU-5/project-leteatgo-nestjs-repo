@@ -7,10 +7,11 @@ import { UserModule } from 'src/user/user.module';
 import { UserChatRoomModule } from 'src/user-chat-room/user-chat-room.module';
 import { ChatParticipantModule } from 'src/chat-participant/chat-participant.module';
 import { ChatRoomGateway } from './chat-room.gateway';
+import { S3Module } from 'src/s3/s3.module';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([ChatRoom]),UserModule, UserChatRoomModule, ChatParticipantModule],
+  imports:[TypeOrmModule.forFeature([ChatRoom]),UserModule, S3Module, UserChatRoomModule, ChatParticipantModule],
   controllers: [ChatRoomController],
-  providers: [ChatRoomService],
+  providers: [ChatRoomService, ChatRoomGateway],
 })
 export class ChatRoomModule {}

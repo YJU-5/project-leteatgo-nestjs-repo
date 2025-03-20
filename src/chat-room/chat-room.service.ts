@@ -20,11 +20,13 @@ export class ChatRoomService {
 
   // 채팅방 생성 
   // 태그, 카테고리 구현 필요 
-  async createChatRoom(createChatRoomDto: CreateChatRoomDto , socialId) {
+  async createChatRoom(createChatRoomDto: CreateChatRoomDto , socialId, uploadedUrl) {
     const user = await this.userService.getProfile(socialId)
-    const newChatRoom =this.chatRoomRepository.create({
+
+    const newChatRoom = this.chatRoomRepository.create({
       ...createChatRoomDto,
       hostId: user,
+      pictureUrl:uploadedUrl,
       status: 'IN_PROGRESS',
     })
     
@@ -36,9 +38,32 @@ export class ChatRoomService {
     return saveChatRoom
   }
 
+    // 채팅방 수정 기능 
+    async chatRoomUpdate(updateChatRoomDto: UpdateChatRoomDto, chatRoomId, uploadedUrl){
+      // URL이 없으면 사진 URL 반영안함 
+      if(uploadedUrl.length<=0){
+        await this.chatRoomRepository.update(chatRoomId,{
+          ...updateChatRoomDto,
+        })
+      }else{
+        await this.chatRoomRepository.update(chatRoomId,{
+          ...updateChatRoomDto,
+          pictureUrl:uploadedUrl
+        })
+      }
+      const updatedChatRoom = await this.chatRoomFindOne(chatRoomId)
+      return updatedChatRoom
+    }
+
   // 전체 채팅방 조회
-  async chatRoomfindAll() {
+  async chatRoomFindAll() {
     const chatRooms = await this.chatRoomRepository.find()
     return chatRooms
+  }
+
+  // 특정 채팅방 조회 
+  async chatRoomFindOne(chatRoomId){
+    const chatRoom = await this.chatRoomRepository.findOne({where:{id:chatRoomId}})
+    return chatRoom
   }
 }

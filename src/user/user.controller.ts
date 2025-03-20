@@ -10,10 +10,11 @@ import { Public } from 'src/decorator/public.decorator';
 import { RequestWithUser } from './request.interface';
 import { ApiOperationDecorator } from 'src/decorator/api.operration.decorator';
 import { ApiLoginBody } from 'src/decorator/api.login.body.decorator';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiRequestedRangeNotSatisfiableResponse } from '@nestjs/swagger';
 import { ApiLoginUpdate } from 'src/decorator/api.login.update.decorator';
 import { S3Service } from 'src/s3/s3.service';
 import { GoogleStrategy } from 'src/auth/google.strategy';
+import { UserChatRoomService } from 'src/user-chat-room/user-chat-room.service';
 
 @Controller('user')
 export class UserController {
@@ -22,7 +23,7 @@ export class UserController {
     private readonly kakaoStrategy : KakaoStrategy,
     private readonly s3Service : S3Service,
     private readonly googleStraetgy: GoogleStrategy,
-
+    private readonly userChatRoomService: UserChatRoomService
   ) {}
 
   // ## 구글로그인 ## ## TEST ##TEST
@@ -36,6 +37,7 @@ export class UserController {
   }
 
   // ## 카카오 로그인 ## 
+  // 만들때 두개가 만들어진다 
   @Post('kakao/login')
   @ApiOperationDecorator('카카오 로그인','# 카카오 로그인',201,'성공적 로그인 완료')
   @ApiLoginBody()
@@ -93,5 +95,38 @@ export class UserController {
       updateUserDto,
       uploadedUrl,
     )
+  }
+
+  // 토큰을 사용해 유저목록을 가져오고 유저 아이디를 이용해서 추출하기 
+
+  // 내가 개최한 채팅 목록 
+  
+  @Get('hosted')
+  @ApiOperationDecorator('내가 개최한 채팅 목록 조회','# 개최한 채팅 목록 조회',201,'조회 완료')
+  @ApiBearerAuth()
+  async chatRoomFindJoined(
+    @Req() req:RequestWithUser,
+  ){
+    const socialId = req.user.socialId
+    const user = await this.userService.getProfile(socialId)
+    const hostChatList = await this.userChatRoomService.userChatRoomHosted(user.id)
+  
+    return hostChatList
+  }
+
+  // 내가 참가한 채팅 목록
+  // chat-pa는 어디 써야 할까 
+  // 우선 chat-room으로 하기 
+  @Get('joined')
+  @ApiOperationDecorator('내가 참가한 채팅 목록 조회','# 내가 참가한 채팅 목록 조회',201,'조회 완료')
+  @ApiBearerAuth()
+  async chatRoomFindHosted(
+    @Req() req:RequestWithUser,
+  ){
+    const socialId = req.user.socialId
+    const user = await this.userService.getProfile(socialId)
+    const userChatJoinList = await this.userChatRoomService.userChatRoomJoin(user.id)
+
+    return userChatJoinList
   }
 }
