@@ -27,7 +27,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, documentFactory);
 
   // JWT 전역가드 설정 
-  // app.useGlobalGuards(new JwtAuthGuard(new Reflector()))
+  app.useGlobalGuards(new JwtAuthGuard(new Reflector()))
   
   //Cors
   app.enableCors();

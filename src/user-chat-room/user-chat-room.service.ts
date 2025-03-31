@@ -113,4 +113,22 @@ export class UserChatRoomService {
   return chatRoomList
   }
 
+  // 채팅방 참여자 목록 
+  async getRoomParticipants(chatRoomId){
+    const participants = await this.userChatRoomRepository.find({
+      where:{
+        chatRoomId:{id:chatRoomId},
+        isActive:false,
+      },
+      relations:['userId','chatRoomId']
+    })
+
+    const users = participants.map(user =>({
+      name:user.userId.name,
+      pictureUrl:user.userId.pictureUrl,
+      role:user.userId.role,
+    }))
+    return users
+  }
+
 }

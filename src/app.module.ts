@@ -25,6 +25,6 @@ import { ChatRoomGateway } from './chat-room/chat-room.gateway';
 @Module({
   imports: [ConfigModule.forRoot({isGlobal:true}),TypeOrmModule.forRoot(typeOrmModuleOptions), UserModule, ChatRoomModule, ReviewModule, CategoryModule, TagModule, UserChatRoomModule, MessageModule, ChatParticipantModule,BoardModule, LikeModule, CommentModule, SubscriptionModule, NotificationModule, RestaurantModule, AuthModule, S3Module],
   controllers: [AppController],
-  providers: [AppService, ChatRoomGateway],
+  providers: [AppService],
 })
 export class AppModule {}

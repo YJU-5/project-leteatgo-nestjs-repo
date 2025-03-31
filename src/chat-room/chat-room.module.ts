@@ -8,9 +8,10 @@ import { UserChatRoomModule } from 'src/user-chat-room/user-chat-room.module';
 import { ChatParticipantModule } from 'src/chat-participant/chat-participant.module';
 import { ChatRoomGateway } from './chat-room.gateway';
 import { S3Module } from 'src/s3/s3.module';
+import { MessageModule } from 'src/message/message.module';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([ChatRoom]),UserModule, S3Module, UserChatRoomModule, ChatParticipantModule],
+  imports:[TypeOrmModule.forFeature([ChatRoom]),UserModule, S3Module, UserChatRoomModule, ChatParticipantModule, MessageModule],
   controllers: [ChatRoomController],
   providers: [ChatRoomService, ChatRoomGateway],
 })

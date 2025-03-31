@@ -10,12 +10,12 @@ export class Message {
     id:number;
 
     // 채팅방 아이디 
-    @ManyToOne(()=> ChatRoom,(chatRoom) => chatRoom.messages)
+    @ManyToOne(()=> ChatRoom,(chatRoom) => chatRoom.messages,{onDelete:"CASCADE"})
     @JoinColumn({name:'chat_room_id'})
     chatRoomId : ChatRoom 
     
     // 메세지 보낸 사용자 아이디 
-    @ManyToOne(()=> User,(user) => user.messages)
+    @ManyToOne(()=> User,(user) => user.messages,{onDelete:"CASCADE"})
     @JoinColumn({name:'user_id'})
     userId : User
 

@@ -12,3 +12,5 @@ emit : 메시지를 특정 이벤트 이름과 함께 전송하는 데 사용 (�
 on : 특정 이벤트 이름을 수신하는 데 사용 
 
 https://velog.io/@jaegeunsong_1997/NestJS-Web-Socket
+
+https://stackoverflow.com/questions/44166273/socket-io-sends-two-messages
