@@ -1,16 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Req, UploadedFile } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { AuthGuard } from '@nestjs/passport';
-import { Request } from 'express';
-import { firstValueFrom } from 'rxjs';
 import { KakaoStrategy } from 'src/auth/kakao.strategy';
 import { Public } from 'src/decorator/public.decorator';
 import { RequestWithUser } from './request.interface';
 import { ApiOperationDecorator } from 'src/decorator/api.operration.decorator';
 import { ApiLoginBody } from 'src/decorator/api.login.body.decorator';
-import { ApiBearerAuth, ApiRequestedRangeNotSatisfiableResponse } from '@nestjs/swagger';
+import { ApiBearerAuth} from '@nestjs/swagger';
 import { ApiLoginUpdate } from 'src/decorator/api.login.update.decorator';
 import { S3Service } from 'src/s3/s3.service';
 import { GoogleStrategy } from 'src/auth/google.strategy';

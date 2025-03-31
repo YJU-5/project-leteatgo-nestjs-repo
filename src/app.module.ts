@@ -44,6 +44,6 @@ import { ChatRoomGateway } from './chat-room/chat-room.gateway';
     S3Module,
   ],
   controllers: [AppController],
-  providers: [AppService, ChatRoomGateway],
+  providers: [AppService],
 })
 export class AppModule {}
