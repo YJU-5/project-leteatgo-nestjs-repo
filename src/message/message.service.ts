@@ -24,7 +24,6 @@ export class MessageService {
   }
 
   async getMessage(roomId):Promise<Message[]>{
-
     const messages = await this.messageRepository.find({
       where:{chatRoomId:{id:roomId}},
       order:{createdAt:'ASC'},
