@@ -6,6 +6,12 @@
 
 sudo chown -R $USER:$USER /home/jit/LetEatGo/backend/node_modules
 
+# 개선사항 
+-   메세지 일정기간 내에 불러오기 DB 
+-   사진,위치의 정보도 보낼 수 있게
+
+
+
 # 웹소캣, 실시간채팅 학습
 emit : 메시지를 특정 이벤트 이름과 함께 전송하는 데 사용 (송신자에게 메시지를 보내는 방법)
 

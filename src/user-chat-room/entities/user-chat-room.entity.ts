@@ -28,9 +28,11 @@ export class UserChatRoom {
     @Column('enum',{enum:['USER','HOST'], default:'USER'}) 
     role: 'USER'|'HOST'
 
+    // 채팅방에서 나갔는지 아닌지 
     @Column({name:'is_active', default:false})
     isActive:boolean
 
+    // 채팅방에 연결이 되어있는지 아닌지 
     @Column({name:'is_online',default:true})
     isOnline:boolean
 }

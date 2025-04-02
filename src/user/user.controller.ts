@@ -96,7 +96,6 @@ export class UserController {
   // 토큰을 사용해 유저목록을 가져오고 유저 아이디를 이용해서 추출하기 
 
   // 내가 개최한 채팅 목록 
-  
   @Get('hosted')
   @ApiOperationDecorator('내가 개최한 채팅 목록 조회','# 개최한 채팅 목록 조회',201,'조회 완료')
   @ApiBearerAuth()
