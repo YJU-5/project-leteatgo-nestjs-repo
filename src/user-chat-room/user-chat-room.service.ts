@@ -71,6 +71,8 @@ export class UserChatRoomService {
       relations:['userId','chatRoomId']
     })
 
+    console.log('user',user);
+
     return user ?? null ; // 찾지 못하면 null 반환 
   }
   
@@ -80,7 +82,6 @@ export class UserChatRoomService {
       isActive:false
     })
   }
-
 
   // 내가 개최한 채팅 목록 
   // 여러개도 가능함?

@@ -57,7 +57,9 @@ export class ChatRoomService {
 
   // 전체 채팅방 조회
   async chatRoomFindAll() {
-    const chatRooms = await this.chatRoomRepository.find()
+    const chatRooms = await this.chatRoomRepository.find({
+      where:{status:'IN_PROGRESS'}
+    })
     return chatRooms
   }
 
