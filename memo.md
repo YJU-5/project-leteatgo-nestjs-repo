@@ -10,13 +10,13 @@ sudo chown -R $USER:$USER /home/jit/LetEatGo/backend/node_modules
 -   메세지 일정기간 내에 불러오기 DB 
 -   사진,위치의 정보도 보낼 수 있게
 
+# 리뷰 
+-   프론트에서 리뷰요청 -> 백에서 
+-   브랜치만들고 -> 이슈만들기 
+
 
 
 # 웹소캣, 실시간채팅 학습
 emit : 메시지를 특정 이벤트 이름과 함께 전송하는 데 사용 (송신자에게 메시지를 보내는 방법)
 
 on : 특정 이벤트 이름을 수신하는 데 사용 
-
-https://velog.io/@jaegeunsong_1997/NestJS-Web-Socket
-
-https://stackoverflow.com/questions/44166273/socket-io-sends-two-messages

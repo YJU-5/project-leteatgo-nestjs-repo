@@ -145,20 +145,6 @@ export class ChatRoomGateway implements OnGatewayDisconnect  {
     this.server.to(data.roomId).emit('message', `${user.name}님이 방에서 나갔습니다.`)
   }
 
-  // 채팅방 호스트
-  @SubscribeMessage('getHost')
-  async handleGetHost(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() chatRoomId: string,
-  ){
-    const token = client.handshake.auth.token
-    const decoded = this.jwtService.verify(token) // 토큰 유효성 검사 
-    const user = await this.userService.getProfile(decoded.socialId) // 토큰의 socilId를 이용해서 유저 가져오기
-
-    // 유저의 uuid, 채팅룸 id, 호스트인지 아닌지 
-    
-  }
-
   // 채팅방 참여자 목록 
   @SubscribeMessage('getRoomParticipants')
   async handleRoomGetParticipants(
@@ -166,7 +152,6 @@ export class ChatRoomGateway implements OnGatewayDisconnect  {
     @MessageBody() chatRoomId: string,
   ){
     const participants = await this.userChatRoomService.getRoomParticipants(chatRoomId)
-    console.log(participants);
     client.emit('roomParticipants', participants)
   }
 

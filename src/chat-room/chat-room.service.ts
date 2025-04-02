@@ -56,9 +56,12 @@ export class ChatRoomService {
     }
 
   // 전체 채팅방 조회
+  // 작성자 필요 
+  // 채팅방 아이디 => 그 채팅방에 소속되어있고 HOST인 사람 
   async chatRoomFindAll() {
     const chatRooms = await this.chatRoomRepository.find({
-      where:{status:'IN_PROGRESS'}
+      where:{status:'IN_PROGRESS'},
+      relations:['hostId']
     })
     return chatRooms
   }
