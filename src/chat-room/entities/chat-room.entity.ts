@@ -62,7 +62,7 @@ export class ChatRoom {
 
     // 위도
     @Column({type:'decimal',precision:9, scale:6})
-    latitube: number;
+    latitude: number;
 
     // 경도 
     @Column({type:'decimal',precision:9, scale:6})
@@ -72,13 +72,9 @@ export class ChatRoom {
     @Column()
     address:string
     
-    // 최소 가격
-    @Column({name:'max_price'})
-    maxPrice:number
-
-    // 최대 가격  
-    @Column({name:'min_price'})
-    minPrice:number
+    // 가격 
+    @Column()
+    price:number
 
     // 생성날짜
     @CreateDateColumn({name:'created_at'}) // 생성일시 자동 생성 
