@@ -22,7 +22,7 @@ export class CreateChatRoomDto {
     // 위도
     @ApiProperty({example:37.5665,description:'위도'})
     @IsNumber()
-    latitube:number;
+    latitude:number;
 
     // 경도
     @ApiProperty({example:126.9780,description:'경도'})
@@ -36,15 +36,10 @@ export class CreateChatRoomDto {
     
     // 음식 태그 백엔드 필요 
 
-    // 최대 가격 
-    @ApiProperty({example:10000,description:'최대가격'})
+    // 가격 
+    @ApiProperty({example:10000,description:'가격'})
     @IsNumber()
-    maxPrice:number;
-
-    // 최소가격
-    @ApiProperty({example:500,description:'최소가격'})
-    @IsNumber()
-    minPrice:number;
+    price:number;
 
     // 최소나이
     @ApiProperty({example:20,description:'최소나이'})
