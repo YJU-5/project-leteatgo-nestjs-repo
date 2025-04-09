@@ -16,6 +16,7 @@ export class UserChatRoom {
     chatRoomId:ChatRoom;
     
     // 유저 아이디 user 조인
+    // 여러 채팅룸은 하나의 유저에 조인이 된다 
     @ManyToOne(()=> User, (user) => user.userChatRooms)
     @JoinColumn({name:'user_id'})
     userId: User;

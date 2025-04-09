@@ -27,7 +27,7 @@ export class User {
     email:string;
 
     // 전화번호 
-    @Column({type:'varchar',length:30,name:'phone_number',nullable:true}) //스네이크 컬럼명 매핑
+    @Column({type:'varchar',length:30,name:'phone_number',nullable:true}) 
     phoneNumber:string;
 
     // 생년월일 
@@ -71,50 +71,62 @@ export class User {
     deleted:boolean
 
     // UserChatRoom과 조인 
+    // 하나의 유저는 자기가 참여한 여러 채팅룸 정보를 가질 수 있다 
     @OneToMany(()=>UserChatRoom,(userChatRoom) => userChatRoom.userId)
     userChatRooms: UserChatRoom[];
 
     // ChatRoom과 조인 
+    // 하나의 유저는 여러 채팅룸을 가질 수 있다 (자기가 개최한) 
     @OneToMany(()=>ChatRoom,(chatRoom) => chatRoom.hostId)
     chatRooms:ChatRoom[];
 
     // review와 조인 (평가한 유저)
+    // 하나의 유저는 자기가 작성한 여러 리뷰를 가질 수 있다 
     @OneToMany(()=>Review, (review) => review.reviewer)
     givenReviews : Review[]
     
     // review와 조인 (평가받은 유저)
+    // 하나의 유저는 여러 리뷰를 받을 수 있다  
     @OneToMany(()=>Review, (review) => review.reviewee)
     receivedReviews: Review[]
 
     // message와 조인 
+    // 하나의 유저는 여러 메세지를 가질 수 있다 
     @OneToMany(()=>Message, (message)=> message.userId)
     messages: Message[]
 
     // ChatParticipant와 조인 
+    // 하나의 유저는 여러 채팅방에 참가한 목록을 가질 수 있다 
     @OneToMany(()=>ChatParticipant,(chatParticipant) => chatParticipant.userId)
     chatParticipants:ChatParticipant
 
     // Board와 조인
+    // 하나의 유저는 여러 게시물을 가질 수 있다 
     @OneToMany(() => Board, (board) => board.user)
     boards: Board[];
 
     // Like와 조인
+    // 하나의 유저는 여러 개의 좋아요를 가질 수 있다 
     @OneToMany(() => Like, (like) => like.user)
     likes: Like[];
 
     // Comment와 조인
+    // 하나의 유저는 여러개의 댓글을 가질 수 있다 
     @OneToMany(() => Comment, (comment) => comment.user)
     comments: Comment[];
 
     // 내가 구독한 유저들
+    // 하나의 유저는 여러명의 구독을 가질 수 있다 
     @OneToMany(() => Subscription, (subscription) => subscription.subscriber)
     subscriptions: Subscription[];
 
     // 나를 구독한 유저들
+    // 하나의 유저는 여러명의 구독자들을 가질 수 있다 
     @OneToMany(() => Subscription, (subscription) => subscription.subscribedUser)
     subscribers: Subscription[];
 
     // Notification과 조인
+    // 하나의 유저는 여러 알림을 가질 수 있다 
     @OneToMany(() => Notification, (notification) => notification.user)
     notifications: Notification[];
 }

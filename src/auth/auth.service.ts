@@ -14,14 +14,15 @@ export class AuthService {
 
   // # 구글로그인, JWT 발급 #
   async googleLogin(user){
-    const {email, name, socialId, deleted} = user
 
-    const googlePayload = {email, name, socialId, deleted}
+    const {email, name, socialId, deleted} = user // user.serivce의 구글로그인에서 받아온 user값 
+
+    const googlePayload = {email, name, socialId, deleted} // user에서 추출해서 jwt토큰에 넣어줄 정보들 
 
     const googleJwt ={
-      token: this.jwtService.sign(googlePayload,{
-        secret: process.env.JWT_SECRET,
-        expiresIn: '84h',
+      token: this.jwtService.sign(googlePayload,{ // jwt사인하고 로그인하고 jwt 토큰발급 
+        secret: process.env.JWT_SECRET, // jwt 시크릿번호 환경변수에서 가져오기 
+        expiresIn: '84h', // jwt토큰 유지시간 
       })
     }
     return googleJwt

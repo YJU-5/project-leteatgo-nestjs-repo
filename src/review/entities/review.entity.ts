@@ -22,7 +22,7 @@ export class Review {
     // 평가 받은 유저
     @ManyToOne(()=> User, (user) => user.receivedReviews)
     @JoinColumn({name:'reviewee_id'})
-    reviewee : User;
+    reviewee : User; 
     
     // 평가내용 
     @Column({type:'text'})
@@ -63,4 +63,4 @@ export class Review {
     // 리뷰 활성화 여부
     @Column({type:'smallint',default:1,name:'is_active'})
     isActive:number 
-}
+} 

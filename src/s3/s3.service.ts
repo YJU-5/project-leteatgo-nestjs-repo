@@ -26,8 +26,9 @@ export class S3Service {
             }
         })
     }
-    // S3 파일 업로드 
+// S3 파일 업로드 
 async uploadFile(file: Express.Multer.File): Promise<string> {
+  // file = 컨트롤러에서 받아온 파일 
     file.originalname = Buffer.from(file.originalname, 'ascii').toString(
       'utf-8', // 깨지지 않게 utf-8로 변환해준다
     );
