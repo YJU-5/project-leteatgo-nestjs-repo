@@ -9,11 +9,19 @@ import { JwtStrategy } from 'src/auth/jwt.strategy';
 import { KakaoStrategy } from 'src/auth/kakao.strategy';
 import { S3Module } from 'src/s3/s3.module';
 import { GoogleStrategy } from 'src/auth/google.strategy';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([User]), AuthModule, S3Module],
+  imports: [
+    TypeOrmModule.forFeature([User]),
+    AuthModule,
+    S3Module,
+    MulterModule.register({
+      dest: './uploads',
+    }),
+  ],
   controllers: [UserController],
   providers: [UserService, KakaoStrategy, GoogleStrategy],
-  exports:[UserService]
+  exports: [UserService],
 })
 export class UserModule {}

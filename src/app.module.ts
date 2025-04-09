@@ -21,6 +21,8 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { S3Module } from './s3/s3.module';
 import { ChatRoomGateway } from './chat-room/chat-room.gateway';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -44,6 +46,13 @@ import { ChatRoomGateway } from './chat-room/chat-room.gateway';
     S3Module,
   ],
   controllers: [AppController],
-  providers: [AppService, ChatRoomGateway],
+  providers: [
+    AppService,
+    ChatRoomGateway,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}
