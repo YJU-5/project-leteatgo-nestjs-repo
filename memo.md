@@ -1,19 +1,40 @@
+# POSTGRES DB 접속 명령어 (터미널에서)
 # DB 접속 명령어 docker exec -it postgres_db psql -U root -d project_5team
 # \dt 테이블 확인 
 # \d <테이블이름> : 테이블구조 확인 
+# 접속 후 사용 예시 
+# project_5team=# 
 
-# https://cdragon.tistory.com/entry/NestJS-Guard-%EC%95%8C%EC%95%84%EB%B3%B4%EA%B8%B0-feat-athentication-athorization-%EC%9D%B8%EC%A6%9D%EA%B3%BC-%EC%9D%B8%EA%B0%80 가드설정법
+project_5team=# \dt (테이블 확인 명령어 입력)
+                   List of relations
+ Schema |             Name              | Type  | Owner 
+--------+-------------------------------+-------+-------
+ public | board                         | table | root
+ public | category                      | table | root
+ public | category_chat_rooms_chat_room | table | root
+ public | chat_participant              | table | root
+ public | chat_room                     | table | root
+ public | comment                       | table | root
+ public | like                          | table | root
+ public | message                       | table | root
+ public | notification                  | table | root
+ public | restaurant                    | table | root
+ public | review                        | table | root
+ public | subscription                  | table | root
+ public | tag                           | table | root
+ public | tag_chat_rooms_chat_room      | table | root
+ public | user                          | table | root
+ public | user_chat_room                | table | root
+(16 rows)
 
-sudo chown -R $USER:$USER /home/jit/LetEatGo/backend/node_modules
+# 테이블 확인 후 입력 
+# 예시 : select * from "user";  ""; 이 형태를 지켜주어야함 아니면 오류남
 
 # 개선사항 
 -   메세지 일정기간 내에 불러오기 DB 
 -   사진,위치의 정보도 보낼 수 있게
 
 # 리뷰 
--   프론트에서 리뷰요청 -> 백에서 
--   브랜치만들고 -> 이슈만들기 
-
 
 
 # 웹소캣, 실시간채팅 학습

@@ -16,7 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy){
         })
     }
     async validate(payload:any){
-        // jwt에서 전역으로 정보를 받아서 어떻게 보내줄지 
+        // 프론트엔드에서 보낸 jwt 정보를 추출해서 컨트롤러의 req로 보내줌 
         return{email:payload.email, name: payload.name, socialId:String(payload.socialId), deleted:payload.deleted}
     }
 }
