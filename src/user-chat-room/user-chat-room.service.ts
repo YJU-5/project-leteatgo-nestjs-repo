@@ -49,8 +49,6 @@ export class UserChatRoomService {
       role:'HOST'
     })
 
-    console.log('createHost',createHost); // 완료 
-
     // 실제 생성 
     const saveHost = await this.userChatRoomRepository.save(createHost)
     return saveHost
@@ -66,8 +64,6 @@ export class UserChatRoomService {
       userId:userId,
       role:'USER'
     })
-
-    console.log('createUser',createUser);
 
     // 유저정보 실제 생성 
     const saveUser = await this.userChatRoomRepository.save(createUser)
@@ -85,7 +81,7 @@ export class UserChatRoomService {
       relations:['userId','chatRoomId']
     })
 
-    // console.log('user',user);
+    console.log('user',user); // 몇개를 가지고 오냐
 
     return user ?? null ; // 찾지 못하면 null 반환 
   }
@@ -142,8 +138,6 @@ export class UserChatRoomService {
       },
       relations:['userId','chatRoomId'] // userId, chatRoomId 조인한 값을 참조 
     })
-
-    console.log('participants',participants)
 
     return participants
   }
