@@ -101,7 +101,7 @@ export class ChatRoomGateway implements OnGatewayDisconnect  {
       await this.userChatRoomService.userChatRoomCreateUser(user.id, chatRoomId)
     }
 
-    // 채팅방 연결이 끊긴 유저가 다시 요청해 방에 들어오는 경우 
+    // 채팅방 연결이 끊긴 유저가 다시 요청해 방에 들어오는 경우 // 새로 들어오는사람도 파악함 
     if (userChatRoomGet.isOnline === false) { // 현재 유저가 온라인 상태인지 아닌지 검사 
 
       // 유저아이디와 채팅룸의 아이디를 userChatRoomService의 setUserChatRoomOnline로 전송 
@@ -176,8 +176,6 @@ export class ChatRoomGateway implements OnGatewayDisconnect  {
     // DB에서 chatRoomId에 해당되는 채팅방 참여자목록을 가져옴 
     const participants = await this.userChatRoomService.getRoomParticipants(chatRoomId)
 
-    console.log('participants',participants); // 두 유저의 정보중 role이 전부 user로 나온다
-    
     // 프론트엔드의 roomParticipants 이벤트에 채팅방 참여자목록을 전송 
     client.emit('roomParticipants', participants)
   }
@@ -190,6 +188,6 @@ export class ChatRoomGateway implements OnGatewayDisconnect  {
     @ConnectedSocket() Client:Socket,
     @MessageBody() chatRoomId:string,
   ){
-    console.log(chatRoomId); 
   }
+  
 }
