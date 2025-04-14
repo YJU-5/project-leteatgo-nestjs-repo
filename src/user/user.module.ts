@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { AuthService } from 'src/auth/auth.service';
@@ -14,7 +14,7 @@ import { MulterModule } from '@nestjs/platform-express';
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
-    AuthModule,
+    forwardRef(() => AuthModule),
     S3Module,
     MulterModule.register({
       dest: './uploads',

@@ -5,6 +5,8 @@ import {
   Injectable,
   UnauthorizedException,
   NotFoundException,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -18,6 +20,7 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
   ) {}
 
@@ -64,55 +67,81 @@ export class UserService {
   // 소셜 회원가입
   // # 구글로그인, 회원가입 #
   async googleLogin(user) {
-    const findUser = await this.userRepository.findOneBy({
-      socialId: user.socialId,
-      deleted: false,
-    });
-    if (findUser) {
-      try {
-        // JWT 토큰 발급
-        const googleJwtToken = this.authService.googleLogin(findUser);
-        console.log('login');
-        console.log(googleJwtToken);
-        return googleJwtToken;
-      } catch {
-        throw new UnauthorizedException('구글 로그인 실패');
-      }
-      // 비활성화유저도 일반유저도 아닌경우 회원가입 실시
-    } else {
-      // 생일 날짜 변환 함수
-      console.log('create');
-      function convertBirthdayToDate(birthday: {
-        year: number;
-        month: number;
-        day: number;
-      }): Date {
-        const { year, month, day } = birthday;
-        return new Date(
-          `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
-        );
-      }
-      // 성별 변환
-      function convertGender(gender: string): string {
-        return gender.charAt(0).toUpperCase();
-      }
-      const convertedGender = convertGender(user.gender);
-      const formattedBirtday = convertBirthdayToDate(user.birthday);
+    console.log('Google login user data:', JSON.stringify(user));
 
-      const newUser = this.userRepository.create({
-        socialId: String(user.socialId),
-        name: user.name, // 이름
-        email: user.email, // 이메일
-        picture_url: user.photo, // 사진
-        birthday: formattedBirtday, // 생년월일
-        gender: convertedGender, // 성별
-        socialProvider: user.provider, // 제공자
-        role: 'USER', // 역할
+    // socialId가 없는 경우 이메일로 사용자 찾기 시도
+    let socialId = user.socialId || user.id;
+    if (!socialId && user.email) {
+      // 이메일로 사용자 찾기
+      const existingUser = await this.userRepository.findOne({
+        where: { email: user.email },
       });
-      const saveUser = await this.userRepository.save(newUser); // 실제 생성
-      console.log(saveUser);
-      const googleJwtToken = this.authService.googleLogin(saveUser);
+
+      if (existingUser) {
+        console.log('Found user by email:', existingUser.email);
+        // 기존 사용자가 있으면 socialId 업데이트
+        if (!existingUser.socialId && socialId) {
+          existingUser.socialId = socialId;
+          await this.userRepository.save(existingUser);
+        }
+
+        // JWT 토큰 발급
+        const jwtToken = await this.authService.googleLogin(existingUser);
+        console.log('Generated JWT token for existing user');
+        return jwtToken;
+      }
+    }
+
+    // socialId로 사용자 찾기
+    if (socialId) {
+      const findUser = await this.userRepository.findOneBy({
+        socialId: socialId,
+        deleted: false,
+      });
+
+      if (findUser) {
+        try {
+          console.log('User found by socialId:', findUser.email);
+          // JWT 토큰 발급
+          const googleJwtToken = await this.authService.googleLogin(findUser);
+          console.log('Generated JWT token');
+          return googleJwtToken;
+        } catch (error) {
+          console.error('Google login error:', error);
+          throw new UnauthorizedException('구글 로그인 실패');
+        }
+      }
+    }
+
+    // 새 사용자 생성
+    console.log('Creating new user from Google data');
+    try {
+      // 기본값 설정
+      const now = new Date();
+      const defaultBirthday = now;
+      const defaultGender = 'U'; // Unspecified
+
+      // 사용자 생성
+      const newUser = this.userRepository.create({
+        socialId: String(socialId || Date.now()),
+        name: user.name,
+        email: user.email,
+        picture_url: user.picture || user.photo,
+        birthday: defaultBirthday,
+        gender: defaultGender,
+        socialProvider: 'GOOGLE',
+        role: 'USER',
+      });
+
+      const saveUser = await this.userRepository.save(newUser);
+      console.log('New user created:', saveUser.email);
+
+      const googleJwtToken = await this.authService.googleLogin(saveUser);
+      console.log('Generated JWT token for new user');
       return googleJwtToken;
+    } catch (error) {
+      console.error('Error creating user:', error);
+      throw new UnauthorizedException('사용자 생성 실패: ' + error.message);
     }
   }
 
@@ -210,5 +239,13 @@ export class UserService {
       socialId: socialId,
     });
     return userProfileUpdated;
+  }
+
+  // 첫 번째 사용자 조회
+  async findFirst(): Promise<User> {
+    return this.userRepository.findOne({
+      where: { deleted: false },
+      order: { createdAt: 'ASC' },
+    });
   }
 }

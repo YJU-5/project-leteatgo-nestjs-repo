@@ -4,6 +4,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -28,22 +29,14 @@ async function bootstrap() {
   // JWT 가드는 app.module.ts에서 전역으로 설정되어 있으므로 여기서는 제거
   // app.useGlobalGuards(new JwtAuthGuard(new Reflector()))
 
-  // CORS 설정 업데이트
+  // CORS 설정 추가
   app.enableCors({
-    origin: true, // 모든 origin 허용
+    origin: ['http://localhost:3005', 'http://localhost:3000'],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    allowedHeaders: [
-      'Content-Type',
-      'Accept',
-      'Authorization',
-      'X-Requested-With',
-      'Origin',
-    ],
-    exposedHeaders: ['Authorization'],
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
   });
+
+  app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(process.env.PORT ?? 3001);
 }

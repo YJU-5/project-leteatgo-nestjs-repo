@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -12,15 +12,16 @@ import { GoogleStrategy } from './google.strategy';
 dotenv.config();
 
 @Module({
-  imports:[
+  imports: [
+    forwardRef(() => UserModule),
     JwtModule.register({
-      global:true,
+      global: true,
       secret: process.env.JWT_SECRET, // 보안필요
       signOptions: { expiresIn: '84h' },
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, GoogleStrategy, JwtStrategy ],
-  exports:[AuthService]
+  providers: [AuthService, GoogleStrategy, JwtStrategy],
+  exports: [AuthService],
 })
 export class AuthModule {}

@@ -19,6 +19,7 @@ import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { GetUser } from 'src/decorator/get-user.decorator';
 import { User } from 'src/user/entities/user.entity';
+import { UserService } from 'src/user/user.service';
 import {
   ApiTags,
   ApiOperation,
@@ -35,7 +36,10 @@ import { Public } from 'src/decorator/public.decorator';
 @UseGuards(JwtAuthGuard) // Apply JWT authentication to all endpoints by default
 @ApiBearerAuth() // Add bearer auth to Swagger docs
 export class BoardController {
-  constructor(private readonly boardService: BoardService) {}
+  constructor(
+    private readonly boardService: BoardService,
+    private readonly userService: UserService,
+  ) {}
 
   // 게시물 생성 (단일/다중 이미지 지원)
   @Post()
@@ -45,7 +49,7 @@ export class BoardController {
     description: '게시글이 성공적으로 생성되었습니다.',
   })
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FilesInterceptor('files', 10)) // Allow up to 10 files
+  @UseInterceptors(FilesInterceptor('file', 10))
   async create(
     @Body() createBoardDto: CreateBoardDto,
     @UploadedFiles() files: Express.Multer.File[],
@@ -54,6 +58,7 @@ export class BoardController {
     return this.boardService.create(createBoardDto, files || [], user);
   }
 
+  // 게시물 목록 조회
   @Public() // Make this endpoint public
   @Get()
   @ApiOperation({ summary: '전체 게시글 조회' })
@@ -77,6 +82,7 @@ export class BoardController {
     }
   }
 
+  // 특정 게시글 조회
   @Public() // Make this endpoint public
   @Get(':id')
   @ApiOperation({ summary: '특정 게시글 조회' })

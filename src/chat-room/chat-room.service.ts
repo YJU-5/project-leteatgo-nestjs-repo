@@ -42,7 +42,9 @@ export class ChatRoomService {
   // 위치 기반 채팅방 조회 (필터링 포함)
   async getChatRoomsByLocation(filterDto: FilterChatRoomDto) {
     try {
-      this.logger.debug(`Received filter DTO: ${JSON.stringify(filterDto)}`);
+      this.logger.log(
+        `Starting getChatRoomsByLocation with params: ${JSON.stringify(filterDto)}`,
+      );
 
       const {
         latitude,
@@ -55,6 +57,10 @@ export class ChatRoomService {
         maxAge,
         categories,
       } = filterDto;
+
+      this.logger.log(
+        `Building query with lat: ${latitude}, lng: ${longitude}`,
+      );
 
       // PostGIS를 사용한 거리 계산 쿼리
       const query = this.chatRoomRepository
@@ -89,69 +95,81 @@ export class ChatRoomService {
         .leftJoin('chatRoom.categories', 'category')
         .where('chatRoom.isActive = :isActive', { isActive: 1 });
 
-      // 거리 필터
-      if (maxDistance) {
-        query.andWhere(
-          `ST_DWithin(
-            ST_SetSRID(ST_MakePoint(chatRoom.longitude::numeric, chatRoom.latitude::numeric), 4326)::geography,
-            ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography,
-            :maxDistance * 1000
-          )`,
-          { latitude, longitude, maxDistance },
+      // 임시로 PostGIS 없이 기본 쿼리 실행
+      const basicQuery = this.chatRoomRepository
+        .createQueryBuilder('chatRoom')
+        .select([
+          'chatRoom.id',
+          'chatRoom.title',
+          'chatRoom.description',
+          'chatRoom.status',
+          'chatRoom.startDate',
+          'chatRoom.maxParticipants',
+          'chatRoom.gender',
+          'chatRoom.pictureUrl',
+          'chatRoom.minAge',
+          'chatRoom.maxAge',
+          'chatRoom.latitude',
+          'chatRoom.longitude',
+          'chatRoom.address',
+          'chatRoom.averagePrice',
+          'chatRoom.isActive',
+        ])
+        .leftJoin('chatRoom.hostId', 'host')
+        .leftJoin('chatRoom.categories', 'category')
+        .where('chatRoom.isActive = :isActive', { isActive: 1 });
+
+      this.logger.log('Executing basic query without PostGIS');
+      const chatRooms = await basicQuery.getMany();
+
+      // 거리 계산을 JavaScript로 수행
+      const result = chatRooms.map((room) => {
+        const distance = this.calculateDistance(
+          Number(latitude),
+          Number(longitude),
+          Number(room.latitude),
+          Number(room.longitude),
         );
-      }
+        return { ...room, distance };
+      });
 
-      // 가격 필터
-      if (minPrice !== undefined) {
-        query.andWhere('chatRoom.averagePrice >= :minPrice', { minPrice });
-      }
-      if (maxPrice !== undefined) {
-        query.andWhere('chatRoom.averagePrice <= :maxPrice', { maxPrice });
-      }
+      // 거리로 정렬
+      result.sort((a, b) => a.distance - b.distance);
 
-      // 나이 필터
-      if (minAge !== undefined) {
-        query.andWhere('chatRoom.minAge >= :minAge', { minAge });
-      }
-      if (maxAge !== undefined) {
-        query.andWhere('chatRoom.maxAge <= :maxAge', { maxAge });
-      }
-
-      // 카테고리 필터
-      if (categories && categories.length > 0) {
-        query.andWhere('category.name IN (:...categories)', { categories });
-      }
-
-      // 거리순으로 정렬
-      query.orderBy('distance', 'ASC');
-
-      this.logger.debug(`Generated SQL query: ${query.getSql()}`);
-
-      const chatRooms = await query.getRawAndEntities();
-
-      this.logger.debug(`Found ${chatRooms.entities.length} chat rooms`);
-
-      // 결과를 가공하여 거리 정보 포함
-      const result = chatRooms.entities.map((room, index) => ({
-        ...room,
-        distance: parseFloat(chatRooms.raw[index].distance) || null,
-      }));
-
+      this.logger.log(`Found ${result.length} chat rooms`);
       return result;
     } catch (error) {
-      this.logger.error('채팅방 조회 중 오류 발생:', error);
+      this.logger.error('Error in getChatRoomsByLocation:', error);
       this.logger.error('Error stack:', error.stack);
-      if (error.message.includes('permission denied')) {
-        throw new HttpException(
-          'PostGIS 확장 기능에 대한 권한이 없습니다.',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
       throw new HttpException(
         `채팅방 조회 중 오류가 발생했습니다: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  // Haversine formula를 사용한 거리 계산
+  private calculateDistance(
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number,
+  ): number {
+    const R = 6371; // 지구의 반경 (km)
+    const dLat = this.toRad(lat2 - lat1);
+    const dLon = this.toRad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(this.toRad(lat1)) *
+        Math.cos(this.toRad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  private toRad(value: number): number {
+    return (value * Math.PI) / 180;
   }
 
   // 필터링된 채팅방 조회

@@ -1,42 +1,64 @@
-import { Injectable } from "@nestjs/common";
-import axios from "axios";
+import { PassportStrategy } from '@nestjs/passport';
+import { Strategy, VerifyCallback } from 'passport-google-oauth20';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import axios from 'axios';
 
 @Injectable()
-export class GoogleStrategy{
-    async validateGoogleUser(accessToken:string){
+export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
+  constructor(private readonly configService: ConfigService) {
+    super({
+      clientID: configService.get('GOOGLE_CLIENT_ID'),
+      clientSecret: configService.get('GOOGLE_CLIENT_SECRET'),
+      callbackURL: configService.get('GOOGLE_CALLBACK_URL'),
+      scope: ['email', 'profile'],
+    });
+  }
 
-        // 구글API도 똑같이 요청하기
-        try{
-            const response = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo',{
-                headers:{
-                    Authorization: `Bearer ${accessToken}`,
-                }
-            })
-            const googleResponse = response.data
+  async validateGoogleUser(accessToken: string) {
+    console.log(
+      'Validating Google access token:',
+      accessToken?.substring(0, 10) + '...',
+    );
 
-            const responseGooglePeople = await axios.get('https://people.googleapis.com/v1/people/me?personFields=birthdays,genders,phoneNumbers',{
-                headers:{
-                    Authorization: `Bearer ${accessToken}`,
-                }
-            })
+    try {
+      const response = await axios.get(
+        'https://www.googleapis.com/oauth2/v2/userinfo',
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        },
+      );
 
-            const {genders, birthdays} = responseGooglePeople.data
+      console.log('Google API response:', JSON.stringify(response.data));
 
-            const user ={
-                socialId: googleResponse.sub,
-                name: googleResponse.name,
-                email: googleResponse.email,
-                photo:googleResponse.picture || null,
-                provider:'GOOGLE',
-                gender: genders?.[0].value || null,
-                birthday: birthdays?.[0]?.date || null,
-            }
-
-            return user
-        }catch(error){
-            console.log(error);     
-            throw new Error('구글 로그인 정보를 가져오는데 실패했습니다');
-
-        }
+      return {
+        email: response.data.email,
+        name: response.data.name,
+        picture: response.data.picture,
+        accessToken,
+      };
+    } catch (error) {
+      console.error(
+        'Google validation error:',
+        error.response?.data || error.message,
+      );
+      throw new UnauthorizedException('Invalid Google access token');
     }
+  }
+
+  async validate(
+    accessToken: string,
+    refreshToken: string,
+    profile: any,
+    done: VerifyCallback,
+  ): Promise<any> {
+    const { name, emails, photos } = profile;
+    const user = {
+      email: emails[0].value,
+      name: name.givenName + ' ' + name.familyName,
+      picture: photos[0].value,
+      accessToken,
+    };
+    done(null, user);
+  }
 }

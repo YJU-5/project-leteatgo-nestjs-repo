@@ -1,18 +1,18 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { BoardService } from './board.service';
 import { BoardController } from './board.controller';
+import { BoardService } from './board.service';
 import { Board } from './entities/board.entity';
 import { S3Service } from '../s3/s3.service';
-import { S3Module } from '../s3/s3.module';
+import { UserService } from '../user/user.service';
+import { User } from '../user/entities/user.entity';
+import { AuthModule } from '../auth/auth.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Board]),  // BoardRepository 인식하도록 설정
-    S3Module,  // S3 관련 모듈 추가
-  ],
+  imports: [TypeOrmModule.forFeature([Board, User]), AuthModule, UserModule],
   controllers: [BoardController],
-  providers: [BoardService, S3Service],  // S3Service 추가
-  exports: [BoardService],  // 다른 모듈에서도 BoardService 사용 가능하도록 설정
+  providers: [BoardService, S3Service],
+  exports: [BoardService],
 })
 export class BoardModule {}

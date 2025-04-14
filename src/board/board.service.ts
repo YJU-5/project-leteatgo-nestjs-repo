@@ -28,6 +28,11 @@ export class BoardService {
     user: User,
   ): Promise<Board> {
     try {
+      console.log('Creating board with data:', {
+        createBoardDto,
+        filesCount: files?.length,
+      });
+
       // Validate required fields
       if (!createBoardDto.title || !createBoardDto.content) {
         throw new BadRequestException('Title and content are required');
@@ -36,16 +41,24 @@ export class BoardService {
       // Create new board entity
       const board = this.boardRepository.create({
         ...createBoardDto,
-        user,
+        userId: user.id,
+        user: user,
+        imageUrls: [],
+        hits: 0,
+        like: 0,
       });
+
+      console.log('Board entity created:', board);
 
       // Upload images if provided
       if (files && files.length > 0) {
+        console.log('Uploading files...');
         const imageUrls = await Promise.all(
           files.map(async (file) => {
             try {
+              console.log('Uploading file:', file.originalname);
               const uploadResult = await this.s3Service.uploadFile(file);
-              return uploadResult.url;
+              return uploadResult;
             } catch (error) {
               console.error('Error uploading file:', error);
               throw new InternalServerErrorException('Error uploading image');
@@ -53,17 +66,27 @@ export class BoardService {
           }),
         );
         board.imageUrls = imageUrls;
+        console.log('Files uploaded successfully:', imageUrls);
       }
 
       // Save board to database
+      console.log('Saving board to database...');
       const savedBoard = await this.boardRepository.save(board);
+      console.log('Board saved successfully:', savedBoard);
       return savedBoard;
     } catch (error) {
-      console.error('Error creating board:', error);
+      console.error('Detailed error in create board:', {
+        error,
+        stack: error.stack,
+        message: error.message,
+        name: error.name,
+      });
       if (error instanceof BadRequestException) {
         throw error;
       }
-      throw new InternalServerErrorException('Error creating board');
+      throw new InternalServerErrorException(
+        `Error creating board: ${error.message}`,
+      );
     }
   }
 

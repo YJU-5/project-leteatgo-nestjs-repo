@@ -10,6 +10,7 @@ import {
   Req,
   UploadedFile,
   UseInterceptors,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -136,10 +137,19 @@ export class UserController {
   @ApiLoginBody()
   @Public()
   async googleLogin(@Body() body: { access_token: string }) {
-    const user = await this.googleStraetgy.validateGoogleUser(
-      body.access_token,
-    );
-    return await this.userService.googleLogin(user);
+    try {
+      if (!body.access_token) {
+        throw new UnauthorizedException('Access token is required');
+      }
+
+      const user = await this.googleStraetgy.validateGoogleUser(
+        body.access_token,
+      );
+      return await this.userService.googleLogin(user);
+    } catch (error) {
+      console.error('Google login error:', error);
+      throw new UnauthorizedException(error.message || 'Google login failed');
+    }
   }
 
   // ## 카카오 로그인 ##
