@@ -1,22 +1,23 @@
-# 백엔드의 dockerfile
-# 1. Use Node.js 20 as the base image
+# Use the official Node.js image as the base image
 FROM node:20
 
-# 2. Set the working directory inside the container
-WORKDIR /app
+# Set the working directory inside the container
+WORKDIR /usr/src/app
 
-# 3. Copy package files and install dependencies
-COPY package.json package-lock.json ./
+# Copy package.json and package-lock.json to the working directory
+COPY package*.json ./
+
+# Install the application dependencies
 RUN npm install
 
-# 4. Copy the rest of the source code into the container
+# Copy the rest of the application files
 COPY . .
 
-# 5. Build the NestJS app
+# Build the NestJS application
 RUN npm run build
 
-# 6. Expose port 3001 (the port NestJS will run on)
-EXPOSE 3001
+# Expose the application port
+EXPOSE 3000
 
-# 7. Start the server in production mode
-CMD ["npm", "run", "start:dev"]
+# Command to run the application
+CMD ["node", "dist/main"]

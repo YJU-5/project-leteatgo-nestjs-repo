@@ -1,5 +1,4 @@
-# TEST2
-
+# OPEN CHAT
 # 🌿 브랜치 네이밍 규칙
 ## ✅ 기본 규칙
 - **소문자 사용** (대문자 X)
@@ -58,6 +57,15 @@
 - **예시:**  
   - `experiment/new-algorithm`
   - `experiment/ui-redesign`
+
+---
+
+## 🔀 병합 브랜치 (Merge)
+- **형식:** `merge/병합-설명`
+- **예시:**
+  - `merge/feature-user-auth  → 여러 기능 브랜치 병합`
+  - `merge/bugfix-auth-errors → 여러 버그 픽스 병합`
+  - `merge/hotfix-security-patch → 긴급 수정 병합`
 
 ---
 

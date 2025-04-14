@@ -1,12 +1,15 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 export const typeOrmModuleOptions: TypeOrmModuleOptions = {
-  type: 'postgres', // postgres db를 명시
-  host: 'postgres_db', // postgres host
-  port: 5432, // postgres port
-  username: 'root', // db username
-  password: '1234', // db password
-  database: 'project_5team', // database name
-  entities: [__dirname + '/../**/*.entity.{js,ts}'], // entity class를 기반으로 테이블을 생성할 수 있도록 entity 파일 규칙 정의
+  type: 'postgres',
+  host: process.env.DB_HOST || 'localhost',
+  port: parseInt(process.env.DB_PORT) || 5432,
+  username: process.env.DB_USERNAME || 'root',
+  password: process.env.DB_PASSWORD || '1234',
+  database: process.env.DB_DATABASE_NAME || 'project_5team',
+  entities: [__dirname + '/../**/*.entity.{js,ts}'],
   synchronize: true,
-}; 
+};
