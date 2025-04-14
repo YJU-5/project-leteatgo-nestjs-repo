@@ -41,3 +41,9 @@ project_5team=# \dt (테이블 확인 명령어 입력)
 emit : 메시지를 특정 이벤트 이름과 함께 전송하는 데 사용 (송신자에게 메시지를 보내는 방법)
 
 on : 특정 이벤트 이름을 수신하는 데 사용 
+
+client.emit(...) : 자신에게만 전송
+
+this.server.emit(...): 서버에 연결된 모든 클라이언트
+
+this.server.to(roomId).emit(...) : 특정 채팅방 사용자에게 전송
