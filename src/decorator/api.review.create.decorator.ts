@@ -1,12 +1,13 @@
-import { applyDecorators, UseInterceptors } from "@nestjs/common";
-import { FileInterceptor } from "@nestjs/platform-express";
-import { ApiBody, ApiConsumes } from "@nestjs/swagger";
-import { CreateReviewDto } from "src/review/dto/create-review.dto";
+import { applyDecorators, UseInterceptors } from '@nestjs/common';
+import { ApiConsumes, ApiBody, ApiParam } from '@nestjs/swagger';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { CreateReviewDto } from 'src/review/dto/create-review.dto';
 
-export function ApiReviewCreate(){
+export function ApiReviewCreate() {
   return applyDecorators(
-    UseInterceptors(FileInterceptor('pictureUrl')),
-    ApiConsumes("multipart/form-data"),
-    ApiBody({type:CreateReviewDto}),
+      UseInterceptors(FilesInterceptor('pictureUrl')), // 기본적으로 dto의 이름이 설정됨
+      ApiConsumes('multipart/form-data'), // Swagger 문서화
+      ApiBody({ type: CreateReviewDto }), // Swagger 문서화
   );
 }
+

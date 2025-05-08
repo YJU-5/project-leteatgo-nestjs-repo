@@ -51,4 +51,26 @@ async uploadFile(file: Express.Multer.File): Promise<string> {
       throw new Error(`Failed to upload file: ${error.message}`);
     }
   }
+
+// S3 파일 삭제
+async deleteFile(fileUrl: string): Promise<void> {
+  try {
+    // URL에서 파일 키 추출
+    const urlParts = fileUrl.split("/");
+    const fileKey = urlParts[urlParts.length - 1];
+
+    const params = {
+      Bucket: this.bucketName,
+      Key: fileKey,
+    };
+
+    const command = new DeleteObjectCommand(params);
+    await this.s3.send(command);
+  } catch (error) {
+    throw new Error(`Failed to delete file: ${error.message}`);
+  }
+}
+  
+
+
 }

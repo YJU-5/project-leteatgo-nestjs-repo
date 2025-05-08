@@ -4,6 +4,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -25,8 +26,9 @@ async function bootstrap() {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
 
-  // JWT 전역가드 설정
-  app.useGlobalGuards(new JwtAuthGuard(new Reflector()));
+    // JWT 전역가드 설정
+    app.useGlobalGuards(new JwtAuthGuard(new Reflector()));
+
 
   //Cors
   app.enableCors({
@@ -35,6 +37,7 @@ async function bootstrap() {
     allowedHeaders: 'Content-Type, Accept, Authorization',
     credentials: true,
   });
+
 
   await app.listen(process.env.PORT ?? 3001);
 }

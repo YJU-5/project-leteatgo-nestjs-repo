@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Req, UseGuards, UnauthorizedException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Req, UseGuards, UnauthorizedException, InternalServerErrorException, UploadedFiles, ValidationPipe } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
@@ -7,8 +7,8 @@ import { ApiReviewCreate } from 'src/decorator/api.review.create.decorator';
 import { Public } from 'src/decorator/public.decorator';
 import { S3Service } from 'src/s3/s3.service';
 import { RequestWithUser } from 'src/user/request.interface';
-import { ApiBearerAuth } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { ApiBearerAuth, ApiParam } from '@nestjs/swagger';
+
 
 @Controller('review')
 export class ReviewController {
@@ -17,44 +17,81 @@ export class ReviewController {
     private readonly s3Service: S3Service,
   ) {}
 
-  @Post()
+  @Post(':roomid')
   @ApiOperationDecorator('리뷰생성','# 리뷰 생성',201,'생성완료')
   @ApiReviewCreate()
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
   async create(
+    @Param('roomid') roomid:string,
     @Req() req:RequestWithUser,
     @Body() createReviewDto: CreateReviewDto,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFiles() files: Express.Multer.File[],
   ) {
+
     if(!req.user){
       throw new UnauthorizedException('사용자 인증 실패');
     }
 
-    const uploadedUrl = file ? await this.s3Service.uploadFile(file): '';
+    
+    let uploadedUrls : string[] = [];
+    if(files && files.length>0){
+      try {
+        uploadedUrls = await Promise.all(
+          files.map((file)=> this.s3Service.uploadFile(file)),
+        )
+        
+      } catch (error) {
+        console.error('S3 업로드 에러:', error);
+        throw new InternalServerErrorException('파일 업로드 실패');
+      }
+    }
 
-    const socialId = req.user.socialId
+    const socialId = req.user.socialId;
 
-    return this.reviewService.create(createReviewDto,socialId,uploadedUrl);
+    return this.reviewService.create(createReviewDto,socialId,uploadedUrls,roomid);
   }
 
   @Get()
+  @ApiOperationDecorator('리뷰조회','# 리뷰조회',201,'리뷰조회')
   findAll() {
     return this.reviewService.findAll();
   }
 
   @Get(':id')
+  @ApiOperationDecorator('특정리뷰조회','# 특정리뷰조회',201,'특정리뷰조회')
   findOne(@Param('id') id: string) {
-    return this.reviewService.findOne(+id);
+    return this.reviewService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto) {
-    return this.reviewService.update(+id, updateReviewDto);
+  @ApiOperationDecorator('특정리뷰수정','# 특정리뷰수정',201,'수정완료')
+  @ApiReviewCreate()
+  @ApiBearerAuth()
+  async update(
+    @Param('id') id: string, 
+    @Body( ) updateReviewDto: UpdateReviewDto,
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
+
+    let uploadedUrls : string[] = [];   
+    if(files && files.length>0){
+      try {
+        uploadedUrls = await Promise.all(
+          files.map((file)=> this.s3Service.uploadFile(file)),
+        )
+        
+      } catch (error) {
+        
+        throw new InternalServerErrorException('파일 업로드 실패');
+      }
+    }
+    return this.reviewService.update(id, updateReviewDto,uploadedUrls);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reviewService.remove(+id);
+  @ApiOperationDecorator('리뷰삭제','# 리뷰삭제',201,'삭제완료')
+  @Public()
+  remove(@Param('id') id: string) { 
+    return this.reviewService.remove(id);
   }
 }
