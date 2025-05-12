@@ -126,7 +126,7 @@ export class ChatRoomGateway implements OnGatewayDisconnect  {
     const token = client.handshake.auth.token
     const decoded = this.jwtService.verify(token) // 토큰 유효성 검사 
     const user = await this.userService.getProfile(decoded.socialId) // 토큰의 socilId를 이용해서 유저 가져오기
-    const createdAt = new Date().toISOString();
+    const createdAt = new Date().toISOString();  // 채팅창 작성 시간 저장
 
     // 메세지 DB에 저장 
     const message = await this.messageService.saveMessage(data.roomId,user.id,data.message) 
@@ -150,6 +150,7 @@ export class ChatRoomGateway implements OnGatewayDisconnect  {
     // 가져온 메세지 목록을 배열로 저장 
     const messageArray = messages.map(msg=>`${msg.userId.name}:${msg.message}`)
     
+    // 가져온 메세지 목록을 객체로 저장
     const messageObject = messages.map(msg=>({
       userName: msg.userId.name,
       message: msg.message,
