@@ -8,39 +8,37 @@ dotenv.config(); // .env 파일을 로드
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private readonly jwtService: JwtService,
-  ){}
+  constructor(private readonly jwtService: JwtService) {}
 
   // # 구글로그인, JWT 발급 #
-  async googleLogin(user){
+  async googleLogin(user) {
+    const { email, name, socialId, deleted } = user; // user.serivce의 구글로그인에서 받아온 user값
 
-    const {email, name, socialId, deleted} = user // user.serivce의 구글로그인에서 받아온 user값 
+    const googlePayload = { email, name, socialId, deleted }; // user에서 추출해서 jwt토큰에 넣어줄 정보들
 
-    const googlePayload = {email, name, socialId, deleted} // user에서 추출해서 jwt토큰에 넣어줄 정보들 
-
-    const googleJwt ={
-      token: this.jwtService.sign(googlePayload,{ // jwt사인하고 로그인하고 jwt 토큰발급 
-        secret: process.env.JWT_SECRET, // jwt 시크릿번호 환경변수에서 가져오기 
-        expiresIn: '84h', // jwt토큰 유지시간 
-      })
-    }
-    return googleJwt
+    const googleJwt = {
+      token: this.jwtService.sign(googlePayload, {
+        // jwt사인하고 로그인하고 jwt 토큰발급
+        secret: process.env.JWT_SECRET, // jwt 시크릿번호 환경변수에서 가져오기
+        expiresIn: '84h', // jwt토큰 유지시간
+      }),
+    };
+    return googleJwt;
   }
 
-  async kakaoLogin(user){
-    const {email, name, socialId, deleted} = user 
+  async kakaoLogin(user) {
+    const { email, name, socialId, deleted } = user;
 
-    const kakaoPayload = {email, name, socialId, deleted}
+    const kakaoPayload = { email, name, socialId, deleted };
 
-    const kakaoJwt ={
-      token : this.jwtService.sign(kakaoPayload,{
+    const kakaoJwt = {
+      token: this.jwtService.sign(kakaoPayload, {
         secret: process.env.JWT_SECRET,
         expiresIn: '84h',
-      })
-    } 
-    console.log(kakaoJwt)
-    return kakaoJwt
+      }),
+    };
+    console.log(kakaoJwt);
+    return kakaoJwt;
   }
 
   create(createAuthDto: CreateAuthDto) {

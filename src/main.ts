@@ -26,14 +26,29 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, documentFactory);
 
   // JWT 전역가드 설정
-  app.useGlobalGuards(new JwtAuthGuard(new Reflector()));
+  const reflector = new Reflector();
+  app.useGlobalGuards(new JwtAuthGuard(reflector));
+
+  app.setGlobalPrefix('api');
 
   //Cors
   app.enableCors({
-    origin: process.env.FRONTEND_URL,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: 'Content-Type, Accept, Authorization',
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:3005',
+      'http://localhost:3001',
+      'https://accounts.google.com',
+      'https://oauth2.googleapis.com',
+      // 'http://leteatgo-alb-113785780.ap-northeast-2.elb.amazonaws.com',
+      // 'https://matchash.shop', // 도메인 연결 후
+    ],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders:
+      'Content-Type, Accept, Authorization, X-Requested-With, Origin',
+    exposedHeaders: ['Authorization'],
     credentials: true,
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
   });
 
   await app.listen(process.env.PORT ?? 3001);
