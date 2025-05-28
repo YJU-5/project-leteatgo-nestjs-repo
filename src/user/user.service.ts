@@ -1,4 +1,4 @@
-import { ConflictException, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -147,6 +147,13 @@ export class UserService {
   async getProfile(socialId:string){
     // 컨트롤러에서 받은 소셜아이디로 유저를 찾기
     return await this.userRepository.findOne({where:{socialId:socialId}})
+  }
+
+  // 회원 정보 조회
+  async getuserProfile(userid:string){
+    // 컨트롤러에서 받은 유저id로 유저 찾기
+    const user = await this.userRepository.findOne({where:{id:userid}})
+    return user;
   }
 
   // 회원 정보 수정 // dto 참고, swagger로 해보기  
