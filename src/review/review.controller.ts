@@ -73,7 +73,7 @@ export class ReviewController {
 
   @Get()
   @ApiOperationDecorator('리뷰조회', '# 리뷰조회', 201, '리뷰조회')
-  @ApiBearerAuth()
+  @Public()
   findAll() {
     return this.reviewService.findAll();
   }
