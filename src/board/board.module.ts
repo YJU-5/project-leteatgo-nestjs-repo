@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { BoardService } from "./board.service";
@@ -20,5 +21,14 @@ import { ProfanityModule } from "../profanity/profanity.module";
   controllers: [BoardController],
   providers: [BoardService],
   exports: [BoardService],
+=======
+import { Module } from '@nestjs/common';
+import { BoardService } from './board.service';
+import { BoardController } from './board.controller';
+
+@Module({
+  controllers: [BoardController],
+  providers: [BoardService],
+>>>>>>> origin/main
 })
 export class BoardModule {}

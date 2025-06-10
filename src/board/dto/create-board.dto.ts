@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { IsString, IsNotEmpty } from "class-validator";
 
 export class CreateBoardDto {
@@ -11,3 +12,6 @@ export class CreateBoardDto {
 
   files?: Express.Multer.File[]; // 여러 파일을 받을 수 있도록 수정
 }
+=======
+export class CreateBoardDto {}
+>>>>>>> origin/main

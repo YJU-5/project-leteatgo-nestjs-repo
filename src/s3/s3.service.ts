@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Injectable, UploadedFile } from "@nestjs/common";
 import { file } from "googleapis/build/src/apis/file";
 import { Multer } from "multer";
@@ -9,11 +10,26 @@ import {
 } from "@aws-sdk/client-s3";
 import { v4 as uuidv4 } from "uuid";
 import * as dotenv from "dotenv";
+=======
+import { Injectable, UploadedFile } from '@nestjs/common';
+import { file } from 'googleapis/build/src/apis/file';
+import { Multer } from 'multer';
+import {
+    S3Client,
+    PutObjectCommand,
+    ObjectCannedACL,
+    DeleteObjectCommand,
+  } from '@aws-sdk/client-s3';
+import { v4 as uuidv4 } from 'uuid';
+import * as dotenv from 'dotenv';
+
+>>>>>>> origin/main
 
 dotenv.config(); // .env 파일을 로드
 
 @Injectable()
 export class S3Service {
+<<<<<<< HEAD
   private readonly s3: S3Client;
   private readonly bucketName: string = process.env.AWS_BUCKET_NAME;
   constructor() {
@@ -30,6 +46,24 @@ export class S3Service {
     // file = 컨트롤러에서 받아온 파일
     file.originalname = Buffer.from(file.originalname, "ascii").toString(
       "utf-8" // 깨지지 않게 utf-8로 변환해준다
+=======
+    private readonly s3: S3Client
+    private readonly bucketName: string = process.env.AWS_BUCKET_NAME
+    constructor() {
+        this.s3 = new S3Client({
+            region: process.env.AWS_REGION,
+            credentials: {
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+            }
+        })
+    }
+// S3 파일 업로드 
+async uploadFile(file: Express.Multer.File): Promise<string> {
+  // file = 컨트롤러에서 받아온 파일 
+    file.originalname = Buffer.from(file.originalname, 'ascii').toString(
+      'utf-8', // 깨지지 않게 utf-8로 변환해준다
+>>>>>>> origin/main
     );
     const fileKey = `${uuidv4()}-${file.originalname}`; // 파일이름생성
     const params = {
@@ -50,6 +84,7 @@ export class S3Service {
       throw new Error(`Failed to upload file: ${error.message}`);
     }
   }
+<<<<<<< HEAD
 
   // 여러 파일 동시 업로드
   async uploadFiles(files: Express.Multer.File[]): Promise<string[]> {
@@ -75,4 +110,6 @@ export class S3Service {
       throw new Error(`Failed to delete file: ${error.message}`);
     }
   }
+=======
+>>>>>>> origin/main
 }
