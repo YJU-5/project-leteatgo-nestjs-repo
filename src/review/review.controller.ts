@@ -71,6 +71,20 @@ export class ReviewController {
     return this.reviewService.create(createReviewDto, socialId, uploadedUrls, roomid);
   }
 
+  @Get('/averagesreview')
+  @ApiOperationDecorator('특정리뷰평점조회', '# 특정리뷰평점조회', 201, '특정리뷰평점조회')
+  @ApiBearerAuth()
+  getAverages(@Req() req: RequestWithUser,) {
+
+    if (!req.user) {
+      throw new UnauthorizedException('사용자 인증 실패');
+    }
+
+    const socialId = req.user.socialId
+
+    return this.reviewService.getAverages(socialId);
+  }
+
   @Get()
   @ApiOperationDecorator('리뷰조회', '# 리뷰조회', 201, '리뷰조회')
   @Public()
@@ -84,6 +98,8 @@ export class ReviewController {
   findOne(@Param('id') id: string) {
     return this.reviewService.findOne(id);
   }
+
+
 
   @Get('/room/:roomid')
   @ApiOperationDecorator('유저가작성한리뷰조회', '# 유저가작성한리뷰조회', 201, '유저가작성한리뷰조회')

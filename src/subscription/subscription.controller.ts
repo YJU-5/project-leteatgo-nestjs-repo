@@ -40,7 +40,7 @@ export class SubscriptionController {
 
   @Get('')
   @ApiBearerAuth() // JWT 인증 필요
-  @ApiResponse({ status: 200, description: '언팔로우 성공' })
+  @ApiResponse({ status: 200, description: '팔로우정보 가지고오기 성공' })
   async getFollowings(
     @Req() req: RequestWithUser
    ) {

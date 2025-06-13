@@ -221,4 +221,31 @@ export class ReviewService {
 
     return { message: '리뷰 및 이미지 삭제 완료' };
   }
+
+  async getAverages(socialId: string) {
+
+    //유저정보 
+    const user = await this.userService.getProfile(socialId)
+
+    const reviews = await this.reviewRepository.find({
+      where: { reviewee: { id: user.id } }
+    });
+
+    const calculateAverage = (reviews: any[], key: string): number => {
+      if (reviews.length === 0) return 0;
+      const sum = reviews.reduce((acc, curr) => acc + curr[key], 0);
+      return Number((sum / reviews.length).toFixed(1));
+    };
+
+    const averages = [
+      calculateAverage(reviews, 'kindness'),
+      calculateAverage(reviews, 'humor'),
+      calculateAverage(reviews, 'activeness'),
+      calculateAverage(reviews, 'cook'),
+      calculateAverage(reviews, 'compliance')
+    ];
+
+
+    return averages
+  }
 }
