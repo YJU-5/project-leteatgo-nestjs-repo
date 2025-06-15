@@ -6,43 +6,54 @@ import {
   IsString,
   IsEnum,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class FilterChatRoomDto {
-  @ApiProperty({ description: '현재 위치의 위도' })
+  @ApiProperty({ description: '현재 위치의 위도', required: false })
+  @IsOptional()
+  @Type(() => Number)
   @IsNumber()
-  latitude: number;
+  latitude?: number;
 
-  @ApiProperty({ description: '현재 위치의 경도' })
+  @ApiProperty({ description: '현재 위치의 경도', required: false })
+  @IsOptional()
+  @Type(() => Number)
   @IsNumber()
-  longitude: number;
+  longitude?: number;
 
   @ApiProperty({ description: '최소 거리 (km)', required: false })
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   minDistance?: number;
 
   @ApiProperty({ description: '최대 거리 (km)', required: false })
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   maxDistance?: number;
 
   @ApiProperty({ description: '최소 가격', required: false })
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   minPrice?: number;
 
   @ApiProperty({ description: '최대 가격', required: false })
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   maxPrice?: number;
 
   @ApiProperty({ description: '최소 나이', required: false })
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   minAge?: number;
 
   @ApiProperty({ description: '최대 나이', required: false })
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   maxAge?: number;
 

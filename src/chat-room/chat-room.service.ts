@@ -176,9 +176,55 @@ export class ChatRoomService {
   async getFilteredChatRooms(filterDto: FilterChatRoomDto) {
     const query = this.chatRoomRepository
       .createQueryBuilder('chatRoom')
-      .leftJoinAndSelect('chatRoom.hostId', 'hostId')
-      .leftJoinAndSelect('chatRoom.categories', 'categories')
+      .select([
+        'chatRoom.id',
+        'chatRoom.title',
+        'chatRoom.description',
+        'chatRoom.status',
+        'chatRoom.startDate',
+        'chatRoom.maxParticipants',
+        'chatRoom.gender',
+        'chatRoom.pictureUrl',
+        'chatRoom.minAge',
+        'chatRoom.maxAge',
+        'chatRoom.latitude',
+        'chatRoom.longitude',
+        'chatRoom.address',
+        'chatRoom.averagePrice',
+        'chatRoom.isActive',
+        'chatRoom.createdAt',
+        'chatRoom.updatedAt',
+        'hostId.id',
+        'hostId.name',
+        'hostId.email',
+        'hostId.pictureUrl',
+        'categories.id',
+        'categories.name',
+      ])
+      .leftJoin('chatRoom.hostId', 'hostId')
+      .leftJoin('chatRoom.categories', 'categories')
       .where('chatRoom.isActive = :isActive', { isActive: 1 });
+
+    // 위치 기반(거리 기반) 필터 추가
+    if (
+      filterDto.latitude !== undefined &&
+      filterDto.longitude !== undefined &&
+      filterDto.minDistance !== undefined &&
+      filterDto.maxDistance !== undefined
+    ) {
+      query.andWhere(
+        `ST_DistanceSphere(
+          ST_MakePoint(chatRoom.longitude, chatRoom.latitude),
+          ST_MakePoint(:lng, :lat)
+        ) BETWEEN :minDist AND :maxDist`,
+        {
+          lng: filterDto.longitude,
+          lat: filterDto.latitude,
+          minDist: filterDto.minDistance * 1000, // km → m
+          maxDist: filterDto.maxDistance * 1000, // km → m
+        },
+      );
+    }
 
     if (filterDto.categories && filterDto.categories.length > 0) {
       query.andWhere('categories.name IN (:...categories)', {
@@ -203,6 +249,18 @@ export class ChatRoomService {
     if (filterDto.maxAge) {
       query.andWhere('chatRoom.maxAge <= :maxAge', {
         maxAge: filterDto.maxAge,
+      });
+    }
+
+    if (filterDto.minPrice) {
+      query.andWhere('chatRoom.averagePrice >= :minPrice', {
+        minPrice: filterDto.minPrice,
+      });
+    }
+
+    if (filterDto.maxPrice) {
+      query.andWhere('chatRoom.averagePrice <= :maxPrice', {
+        maxPrice: filterDto.maxPrice,
       });
     }
 

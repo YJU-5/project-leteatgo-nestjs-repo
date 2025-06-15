@@ -16,7 +16,7 @@ import { Public } from 'src/decorator/public.decorator';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @ApiTags('chat-room')
-@Controller('api/chat-room')
+@Controller('chat-room')
 export class ChatRoomController {
   private readonly logger = new Logger(ChatRoomController.name);
 

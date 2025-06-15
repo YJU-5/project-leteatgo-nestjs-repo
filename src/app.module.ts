@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmModuleOptions } from './configs/typeorm.config';
 import { UserModule } from './user/user.module';
 import { ChatRoomModule } from './chat-room/chat-room.module';
-import { BoardModule } from './board/board.module';
+// import { BoardModule } from './board/board.module';
 import { LikeModule } from './like/like.module';
 import { CommentModule } from './comment/comment.module';
 import { SubscriptionModule } from './subscription/subscription.module';
@@ -36,7 +36,7 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
     UserChatRoomModule,
     MessageModule,
     ChatParticipantModule,
-    BoardModule,
+    // BoardModule,
     LikeModule,
     CommentModule,
     SubscriptionModule,

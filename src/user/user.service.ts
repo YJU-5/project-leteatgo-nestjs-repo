@@ -14,6 +14,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { AuthService } from 'src/auth/auth.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
@@ -22,6 +23,7 @@ export class UserService {
     private readonly userRepository: Repository<User>,
     @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -64,84 +66,67 @@ export class UserService {
     return await this.userRepository.save(user);
   }
 
+  private convertGoogleGender(googleGender: string): string {
+    if (!googleGender || googleGender === 'U') {
+      return 'M'; // Default to 'M' if unspecified or invalid
+    }
+    return googleGender === 'male' ? 'M' : 'F';
+  }
+
   // 소셜 회원가입
   // # 구글로그인, 회원가입 #
-  async googleLogin(user) {
-    console.log('Google login user data:', JSON.stringify(user));
+  async googleLogin(userData: any) {
+    console.log('Google login user data:', userData);
 
-    // socialId가 없는 경우 이메일로 사용자 찾기 시도
-    let socialId = user.socialId || user.id;
-    if (!socialId && user.email) {
-      // 이메일로 사용자 찾기
-      const existingUser = await this.userRepository.findOne({
-        where: { email: user.email },
-      });
-
-      if (existingUser) {
-        console.log('Found user by email:', existingUser.email);
-        // 기존 사용자가 있으면 socialId 업데이트
-        if (!existingUser.socialId && socialId) {
-          existingUser.socialId = socialId;
-          await this.userRepository.save(existingUser);
-        }
-
-        // JWT 토큰 발급
-        const jwtToken = await this.authService.googleLogin(existingUser);
-        console.log('Generated JWT token for existing user');
-        return jwtToken;
-      }
+    if (!userData || !userData.email) {
+      console.error('Invalid user data received:', userData);
+      throw new UnauthorizedException('유효하지 않은 사용자 데이터입니다.');
     }
 
-    // socialId로 사용자 찾기
-    if (socialId) {
-      const findUser = await this.userRepository.findOneBy({
-        socialId: socialId,
-        deleted: false,
-      });
+    // socialId가 없는 경우 이메일을 socialId로 사용
+    const socialId = userData.socialId || userData.email;
 
-      if (findUser) {
-        try {
-          console.log('User found by socialId:', findUser.email);
-          // JWT 토큰 발급
-          const googleJwtToken = await this.authService.googleLogin(findUser);
-          console.log('Generated JWT token');
-          return googleJwtToken;
-        } catch (error) {
-          console.error('Google login error:', error);
-          throw new UnauthorizedException('구글 로그인 실패');
-        }
+    // 기존 사용자 찾기
+    let user = await this.userRepository.findOne({
+      where: [{ socialId: socialId }, { email: userData.email }],
+    });
+
+    if (user) {
+      // 기존 사용자가 있는 경우
+      if (!user.socialId) {
+        user.socialId = socialId;
+        await this.userRepository.save(user);
       }
+      const token = await this.authService.googleLogin(user);
+      console.log('Existing user logged in:', user.email);
+      return token;
     }
 
     // 새 사용자 생성
-    console.log('Creating new user from Google data');
     try {
-      // 기본값 설정
       const now = new Date();
-      const defaultBirthday = now;
-      const defaultGender = 'U'; // Unspecified
+      const gender = this.convertGoogleGender(userData.gender);
 
-      // 사용자 생성
       const newUser = this.userRepository.create({
-        socialId: String(socialId || Date.now()),
-        name: user.name,
-        email: user.email,
-        picture_url: user.picture || user.photo,
-        birthday: defaultBirthday,
-        gender: defaultGender,
+        email: userData.email,
+        name: userData.name || userData.email.split('@')[0],
+        socialId: socialId,
+        picture_url: userData.picture || null,
+        birthday: now,
+        gender: gender,
+        deleted: false,
         socialProvider: 'GOOGLE',
-        role: 'USER',
       });
 
-      const saveUser = await this.userRepository.save(newUser);
-      console.log('New user created:', saveUser.email);
+      const savedUser = await this.userRepository.save(newUser);
+      console.log('New user created:', savedUser.email);
 
-      const googleJwtToken = await this.authService.googleLogin(saveUser);
+      const token = await this.authService.googleLogin(savedUser);
       console.log('Generated JWT token for new user');
-      return googleJwtToken;
+      return token;
     } catch (error) {
-      console.error('Error creating user:', error);
-      throw new UnauthorizedException('사용자 생성 실패: ' + error.message);
+      console.error('Error creating new user:', error);
+      throw new UnauthorizedException('구글 회원가입 실패: ' + error.message);
     }
   }
 

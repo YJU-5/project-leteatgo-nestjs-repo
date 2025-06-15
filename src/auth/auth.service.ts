@@ -1,10 +1,16 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  forwardRef,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as dotenv from 'dotenv';
 import { UserService } from '../user/user.service';
 import { User } from '../user/entities/user.entity';
+import { ConfigService } from '@nestjs/config';
 
 dotenv.config(); // .env 파일을 로드
 
@@ -14,45 +20,48 @@ export class AuthService {
     @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   // # 구글로그인, JWT 발급 #
-  async googleLogin(
-    req,
-  ): Promise<{ accessToken: string; user: User } | { error: string }> {
-    if (!req.user) {
-      return { error: '로그인에 실패했습니다.' };
+  async googleLogin(req) {
+    if (!req.headers.authorization) {
+      throw new UnauthorizedException('액세스 토큰이 필요합니다.');
     }
 
-    const { email, name, picture } = req.user;
+    const accessToken = req.headers.authorization.replace('Bearer ', '');
 
-    // 기존 사용자 확인 또는 새로운 사용자 생성
-    let user = await this.userService.findByEmail(email);
-    if (!user) {
-      user = await this.userService.create({
-        email,
-        name,
-        pictureUrl: picture,
-        socialProvider: 'GOOGLE',
-        role: 'USER',
-        phoneNumber: null,
-        birthday: null,
-        gender: null,
-        socialId: req.user.id || String(Date.now()), // Google ID 또는 임시 ID 생성
+    try {
+      // Google API로 사용자 정보 가져오기
+      const response = await fetch(
+        'https://www.googleapis.com/oauth2/v2/userinfo',
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch user info from Google');
+      }
+
+      const userData = await response.json();
+      console.log('Google user data:', userData);
+
+      // UserService를 통해 사용자 처리
+      const user = await this.userService.googleLogin({
+        email: userData.email,
+        name: userData.name,
+        picture: userData.picture,
+        socialId: userData.id,
       });
+
+      return {
+        accessToken: this.jwtService.sign({ email: user.email }),
+      };
+    } catch (error) {
+      console.error('Google login error:', error);
+      throw new UnauthorizedException('구글 로그인 실패: ' + error.message);
     }
-
-    // JWT 토큰 생성
-    const payload = {
-      sub: user.id,
-      email: user.email,
-      name: user.name,
-    };
-
-    return {
-      accessToken: this.jwtService.sign(payload),
-      user,
-    };
   }
 
   async kakaoLogin(user) {
@@ -67,6 +76,99 @@ export class AuthService {
       }),
     };
     return kakaoJwt;
+  }
+
+  async googleTokenLogin(accessToken: string) {
+    try {
+      // Google API로 사용자 정보 가져오기
+      const response = await fetch(
+        'https://www.googleapis.com/oauth2/v2/userinfo',
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch user info from Google');
+      }
+
+      const userData = await response.json();
+      console.log('Google user data:', userData);
+
+      // UserService를 통해 사용자 처리
+      const user = await this.userService.googleLogin({
+        email: userData.email,
+        name: userData.name,
+        picture: userData.picture,
+        socialId: userData.id,
+      });
+
+      // JWT 토큰 생성
+      return {
+        accessToken: this.jwtService.sign({ email: user.email }),
+      };
+    } catch (error) {
+      console.error('Google token login error:', error);
+      throw new UnauthorizedException('구글 로그인 실패: ' + error.message);
+    }
+  }
+
+  async googleAuthCallback(code: string) {
+    try {
+      // Google OAuth token endpoint로 인증 코드 교환
+      const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          code,
+          client_id: this.configService.get('GOOGLE_CLIENT_ID'),
+          client_secret: this.configService.get('GOOGLE_CLIENT_SECRET'),
+          redirect_uri: this.configService.get('GOOGLE_CALLBACK_URL'),
+          grant_type: 'authorization_code',
+        }),
+      });
+
+      if (!tokenResponse.ok) {
+        const errorData = await tokenResponse.text();
+        console.error('Google token exchange error:', errorData);
+        throw new Error('Failed to exchange authorization code');
+      }
+
+      const { access_token } = await tokenResponse.json();
+
+      // Google API로 사용자 정보 가져오기
+      const userInfoResponse = await fetch(
+        'https://www.googleapis.com/oauth2/v2/userinfo',
+        {
+          headers: { Authorization: `Bearer ${access_token}` },
+        },
+      );
+
+      if (!userInfoResponse.ok) {
+        throw new Error('Failed to fetch user info from Google');
+      }
+
+      const userData = await userInfoResponse.json();
+      console.log('Google user data:', userData);
+
+      // UserService를 통해 사용자 처리
+      const user = await this.userService.googleLogin({
+        email: userData.email,
+        name: userData.name,
+        picture: userData.picture,
+        socialId: userData.id,
+      });
+
+      // JWT 토큰 생성
+      return {
+        accessToken: this.jwtService.sign({ email: user.email }),
+      };
+    } catch (error) {
+      console.error('Google auth callback error:', error);
+      throw new UnauthorizedException('구글 로그인 실패: ' + error.message);
+    }
   }
 
   create(createAuthDto: CreateAuthDto) {

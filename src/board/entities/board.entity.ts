@@ -19,15 +19,15 @@ export class Board {
   id: number;
 
   // 유저 아이디
-  @Column({ name: 'user_id' })
-  userId: string;
+  @Column({ name: 'user_id', nullable: false })
+  userId: number;
 
   @ManyToOne(() => User, (user) => user.boards, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User;
 
   // 이미지 URL 배열
-  @Column('text', { array: true, nullable: true })
+  @Column('text', { array: true, nullable: true, default: [] })
   imageUrls: string[];
 
   // 제목
