@@ -5,15 +5,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserChatRoom } from './entities/user-chat-room.entity';
 import { privateDecrypt } from 'crypto';
 import { Repository } from 'typeorm';
-import { Review } from 'src/review/entities/review.entity';
 
 @Injectable()
 export class UserChatRoomService {
   constructor(
     @InjectRepository(UserChatRoom)
     private readonly userChatRoomRepository:Repository<UserChatRoom>,
-     @InjectRepository(Review)
-    private readonly reviewRepository: Repository<Review>,
 
   ){}
   
@@ -115,42 +112,20 @@ export class UserChatRoomService {
   }
 
   // 내가 참가한 채팅 목록
-  async userChatRoomJoin(userId: string) {
-    const userChatList = await this.userChatRoomRepository.find({
-      where: {
-        userId: { id: userId },
-        role: 'USER',
-      },
-      relations: ['userId', 'chatRoomId'],
-    });
-  
-    const chatRoomList = await Promise.all(
-      userChatList.map(async (item) => {
-        const chatRoom = item.chatRoomId;
-  
-        const [completed ,reviews] = await Promise.all([
-          this.reviewRepository.exists({
-            where: {
-              chatRoom: { id: chatRoom.id },
-              reviewer: { id: userId },
-            },
-          }),
-          this.reviewRepository.count({
-            where: {
-              chatRoom: { id: chatRoom.id },
-            },
-          }),
-        ]);
-  
-        return {
-          ...chatRoom,
-          completed: completed,
-          reviews,
-        };
-      }),
-    );
-  
-    return chatRoomList;
+  async userChatRoomJoin(userId){
+    // user.controller.ts 에서 받아온 userId로 role(역할)이 USER인 유저를 찾는다 
+  const userChatList = await this.userChatRoomRepository.find({
+    where:{
+      userId:{id:userId},
+      role:'USER',
+    },
+    relations:['userId','chatRoomId'] // userChatRoom과 조인되어있는 userId, chatRoomId에서 정보에서 찾는다 
+  })
+
+  // 여러 배열로 되어있는 목록을 나눔  
+  const chatRoomList = userChatList.map(item=> item.chatRoomId)
+
+  return chatRoomList
   }
 
   // 채팅방 참여자 목록 

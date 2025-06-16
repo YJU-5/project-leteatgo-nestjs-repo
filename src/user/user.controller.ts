@@ -94,7 +94,7 @@ export class UserController {
   @ApiOperationDecorator('회원 정보 조회','# 회원 정보 조회',201,'조회 완료')
   @ApiBearerAuth()
   getuserProfile(@Param('id') userid:string){
-    return this.userService.getProfile(userid)
+    return this.userService.getuserProfile(userid)
   }
 
   // 회원 정보 수정 
@@ -152,12 +152,12 @@ export class UserController {
     // 프론트엔드에서 내가 참가한 채팅목록 요청을 하였을 때 req로 jwt에 들어있는 정보를 추출 
     const socialId = req.user.socialId
     
-    // socialId를 이용해서 DB에서 유저정보를 가져옴
-    const user = await this.userService.getProfile(socialId);
+    // socailId를 이용해서 DB에서 유저정보를 가져옴 
+    const user = await this.userService.getProfile(socialId)
 
-    // 유저아이디를 userChatRoomService의 userChatRoomJoin로 보냄
-    const userChatJoinList = await this.userChatRoomService.userChatRoomJoin(user.id);
+    // 유저아이디를 userChatRoomService의 userChatRoomJoin로 보냄  
+    const userChatJoinList = await this.userChatRoomService.userChatRoomJoin(user.id)
 
-    return userChatJoinList;
+    return userChatJoinList
   }
 }
