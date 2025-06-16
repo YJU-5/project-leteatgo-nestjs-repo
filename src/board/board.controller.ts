@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import {
   Controller,
   Get,
@@ -40,28 +39,10 @@ export class BoardController {
     description: "모든 사진첩을 최신순으로 조회합니다.",
   })
   @ApiResponse({ status: 200, description: "사진첩 목록 조회 성공" })
-=======
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { BoardService } from './board.service';
-import { CreateBoardDto } from './dto/create-board.dto';
-import { UpdateBoardDto } from './dto/update-board.dto';
-
-@Controller('board')
-export class BoardController {
-  constructor(private readonly boardService: BoardService) {}
-
-  @Post()
-  create(@Body() createBoardDto: CreateBoardDto) {
-    return this.boardService.create(createBoardDto);
-  }
-
-  @Get()
->>>>>>> origin/main
   findAll() {
     return this.boardService.findAll();
   }
 
-<<<<<<< HEAD
   @Public()
   @Get(":id")
   @ApiOperation({
@@ -190,20 +171,5 @@ export class BoardController {
   @ApiResponse({ status: 404, description: "사진첩을 찾을 수 없음" })
   remove(@Param("id") id: string, @Req() req: any) {
     return this.boardService.remove(+id, req.user.id);
-=======
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.boardService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBoardDto: UpdateBoardDto) {
-    return this.boardService.update(+id, updateBoardDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.boardService.remove(+id);
->>>>>>> origin/main
   }
 }

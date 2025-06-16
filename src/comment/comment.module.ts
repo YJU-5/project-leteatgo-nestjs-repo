@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { CommentService } from "./comment.service";
@@ -18,14 +17,5 @@ import { ProfanityModule } from "../profanity/profanity.module";
   controllers: [CommentController],
   providers: [CommentService],
   exports: [CommentService],
-=======
-import { Module } from '@nestjs/common';
-import { CommentService } from './comment.service';
-import { CommentController } from './comment.controller';
-
-@Module({
-  controllers: [CommentController],
-  providers: [CommentService],
->>>>>>> origin/main
 })
 export class CommentModule {}

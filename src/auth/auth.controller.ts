@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-<<<<<<< HEAD
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { CreateAuthDto } from "./dto/create-auth.dto";
@@ -55,14 +54,4 @@ export class AuthController {
   async testLogin(@Body() body: { email: string }) {
     return this.authService.createTestToken(body.email);
   }
-=======
-} from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
-
-@Controller('auth')
-export class AuthController {
-  constructor(private readonly authService: AuthService) {}
->>>>>>> origin/main
 }

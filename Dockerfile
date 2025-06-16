@@ -1,28 +1,27 @@
-<<<<<<< HEAD
-# Use the official Node.js image as the base image
-FROM node:20
+# # Use the official Node.js image as the base image
+# FROM node:20
 
-# Set the working directory inside the container
-WORKDIR /usr/src/app
+# # Set the working directory inside the container
+# WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json to the working directory
-COPY package*.json ./
+# # Copy package.json and package-lock.json to the working directory
+# COPY package*.json ./
 
-# Install the application dependencies
-RUN npm install
+# # Install the application dependencies
+# RUN npm install
 
-# Copy the rest of the application files
-COPY . .
+# # Copy the rest of the application files
+# COPY . .
 
-# Build the NestJS application
-RUN npm run build
+# # Build the NestJS application
+# RUN npm run build
 
-# Expose the application port
-EXPOSE 3000
+# # Expose the application port
+# EXPOSE 3001
 
-# Command to run the application
-CMD ["node", "dist/main"]
-=======
+# # Command to run the application
+# CMD ["node", "dist/main"]
+
 # 빌드 스테이지
 FROM node:20-alpine AS builder
 
@@ -39,14 +38,14 @@ FROM node:20-alpine AS runner
 
 WORKDIR /app
 
-COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
 
 ENV NODE_ENV=production
-ENV PORT=3001
+ENV PORT=3005
 
-EXPOSE 3001
+EXPOSE 3005
 
-CMD ["node", "dist/main.js"]
->>>>>>> origin/main
+CMD ["npm", "start"]

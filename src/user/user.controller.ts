@@ -94,7 +94,7 @@ export class UserController {
   @ApiOperationDecorator('회원 정보 조회','# 회원 정보 조회',201,'조회 완료')
   @ApiBearerAuth()
   getuserProfile(@Param('id') userid:string){
-    return this.userService.getuserProfile(userid)
+    return this.userService.getProfile(userid)
   }
 
   // 회원 정보 수정 

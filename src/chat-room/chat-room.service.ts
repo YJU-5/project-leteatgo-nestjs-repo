@@ -77,14 +77,10 @@ export class ChatRoomService {
   // 특정 채팅방 조회 
   async chatRoomFindOne(chatRoomId) {
     // 가져온 chatRoomId로 여기에 해당하는 채팅방 조회 
-<<<<<<< HEAD
-    const chatRoom = await this.chatRoomRepository.findOne({ where: { id: chatRoomId } })
-=======
     const chatRoom = await this.chatRoomRepository.findOne({ 
       where: { id: chatRoomId },
       relations:['hostId']
      })
->>>>>>> origin/main
     return chatRoom
   }
 }
