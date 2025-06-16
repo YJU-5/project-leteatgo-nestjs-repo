@@ -128,10 +128,15 @@ export class ChatRoomGateway implements OnGatewayDisconnect {
 
     client.join(chatRoomId);
 
-    // 참여했다는 메세지 보내기 
-    this.server.to(chatRoomId).emit('message', `${user.name} 님이 방에 참여하셨습니다.`)
+    // 참여했다는 메세지 보내기
+    this.server.to(chatRoomId).emit('message', {
+      id: Date.now().toString(),
+      userName: 'System',
+      message: `${user.name} 님이 방에 참여하셨습니다.`,
+      createdAt: new Date().toISOString(),
+      isSystem: true,
+    });
 
-    console.log(userChatRoomGet.role)
     // 유저의 역할 보내기
     this.server.emit('role', `${userChatRoomGet.role}`);
   }
