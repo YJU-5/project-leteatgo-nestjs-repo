@@ -1,9 +1,11 @@
-import { NestFactory, Reflector } from "@nestjs/core";
-import { AppModule } from "./app.module";
-import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
-import { AuthGuard } from "@nestjs/passport";
-import { JwtService } from "@nestjs/jwt";
-import { JwtAuthGuard } from "./auth/jwt-auth.guard";
+import { NestFactory, Reflector } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import { JwtService } from '@nestjs/jwt';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { ValidationPipe } from '@nestjs/common';
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -50,6 +52,7 @@ async function bootstrap() {
     preflightContinue: false,
     optionsSuccessStatus: 204,
   });
+
 
   await app.listen(process.env.PORT ?? 3001);
 }
