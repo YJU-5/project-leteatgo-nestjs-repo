@@ -39,8 +39,9 @@ async function bootstrap() {
       'http://localhost:3001',
       'https://accounts.google.com',
       'https://oauth2.googleapis.com',
-      // 'http://leteatgo-alb-113785780.ap-northeast-2.elb.amazonaws.com',
-      // 'https://matchash.shop', // 도메인 연결 후
+      'lh3.googleusercontent.com',
+      'http://leteatgo-alb-113785780.ap-northeast-2.elb.amazonaws.com',
+      'https://matchash.shop', // 도메인 연결 후
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders:

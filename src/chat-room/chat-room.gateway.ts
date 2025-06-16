@@ -16,7 +16,7 @@ import { MessageService } from 'src/message/message.service';
 import { Client } from 'socket.io/dist/client';
 import { Message } from 'src/message/entities/message.entity';
 
-@WebSocketGateway({ namespace: '/chat-room/join', cors: { origin: '*' } })
+@WebSocketGateway({ namespace: '/api/chat-room/join', cors: { origin: '*' } })
 export class ChatRoomGateway implements OnGatewayDisconnect {
   // 소켓 ID 채팅방 ID를 저장하는 map
   private socketRoomMap = new Map<string, string>();
@@ -33,50 +33,69 @@ export class ChatRoomGateway implements OnGatewayDisconnect {
   // 소켓에 연결되었을 때 이벤트
   async handleConnection(client: Socket) {
     try {
-      // 프론트엔드의 채팅방과 연결되었을 때 토큰을 주는데 그것을 추출
       const token = client.handshake.auth.token;
+      if (!token) {
+        client.disconnect();
+        return;
+      }
 
-      // 토큰 유효성 검사
-      const decoded = this.jwtService.verify(token);
-
-      // 토큰에서 추출한 socialId로 유저정보 가져오기
-      const user = await this.userService.getProfile(decoded.socialId);
-
-      // 소켓과 연결되었다는 console.log
-      console.log(`✅ Client connected: ${client.id} - ${user.name}`);
+      try {
+        const decoded = this.jwtService.verify(token);
+        const user = await this.userService.getProfile(decoded.socialId);
+        console.log(`✅ Client connected: ${client.id} - ${user.name}`);
+      } catch (error) {
+        if (error.name === 'TokenExpiredError') {
+          console.log('Token expired, disconnecting client');
+          client.disconnect();
+        } else {
+          console.log('Token verification failed:', error);
+          client.disconnect();
+        }
+      }
     } catch (error) {
-      console.log('error', error);
+      console.log('Connection error:', error);
+      client.disconnect();
     }
   }
 
   // 유저가 연결을 끊을 때 이벤트 (페이지를 나가거나 닫거나 이동하거나 )
   async handleDisconnect(client: Socket) {
-    // 프론트엔드의 채팅방과 연결되었을 때 토큰을 주는데 그것을 추출
-    const token = client.handshake.auth.token;
+    try {
+      const token = client.handshake.auth.token;
+      if (!token) {
+        return;
+      }
 
-    // 토큰 유효성 검사
-    const decoded = this.jwtService.verify(token);
+      try {
+        const decoded = this.jwtService.verify(token);
+        const user = await this.userService.getProfile(decoded.socialId);
+        const roomId = this.socketRoomMap.get(client.id);
 
-    // 토큰에서 추출한 socialId로 유저정보 가져오기
-    const user = await this.userService.getProfile(decoded.socialId);
+        if (roomId) {
+          await this.userChatRoomService.setUserChatRoomDisconnet(
+            user.id,
+            roomId,
+          );
+          this.server.to(roomId).emit('message', {
+            id: Date.now().toString(),
+            userName: 'System',
+            message: `${user.name} 님의 연결이 끊겼습니다.`,
+            createdAt: new Date().toISOString(),
+            isSystem: true,
+          });
+        }
 
-    // map에 저장되어있는 채팅방의 아이디를 가져옴
-    const roomId = this.socketRoomMap.get(client.id);
-
-    // 유저가 연결을 끊을 때 (유저아이디, 연결끊을 채팅방아이디)
-    await this.userChatRoomService.setUserChatRoomDisconnet(user.id, roomId);
-
-    // 소켓과 연결이 끊겼다는 console.log
-    console.log(`disconnected: ${client.id} - ${user.name}`);
-
-    // roomId에 해당하는 방에 메세지로 이벤트와 메세지 전송
-    this.server.to(roomId).emit('message', {
-      id: Date.now().toString(),
-      userName: 'System',
-      message: `${user.name} 님의 연결이 끊겼습니다.`,
-      createdAt: new Date().toISOString(),
-      isSystem: true,
-    });
+        console.log(`disconnected: ${client.id} - ${user.name}`);
+      } catch (error) {
+        if (error.name === 'TokenExpiredError') {
+          console.log('Token expired during disconnect');
+        } else {
+          console.log('Token verification failed during disconnect:', error);
+        }
+      }
+    } catch (error) {
+      console.log('Disconnect error:', error);
+    }
   }
 
   // 프론트에서 보낸 채팅방 참여이벤트와 메세지 roomId를 받아들임
