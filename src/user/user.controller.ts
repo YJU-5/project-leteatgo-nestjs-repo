@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Req, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Req, UploadedFile, Param } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { KakaoStrategy } from 'src/auth/kakao.strategy';
@@ -88,6 +88,13 @@ export class UserController {
 
     // userService의 getProfile에 추출한 소셜아이디 전송 
     return this.userService.getProfile(socialId)
+  }
+
+  @Get(':id')
+  @ApiOperationDecorator('회원 정보 조회','# 회원 정보 조회',201,'조회 완료')
+  @ApiBearerAuth()
+  getuserProfile(@Param('id') userid:string){
+    return this.userService.getuserProfile(userid)
   }
 
   // 회원 정보 수정 
