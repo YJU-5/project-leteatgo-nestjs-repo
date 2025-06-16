@@ -168,7 +168,7 @@ export class UserService {
   // 본인 회원 정보 조회
   async getProfile(id: string) {
     // id로 유저를 찾기
-    return await this.userRepository.findOne({ where: { id: id } });
+    return await this.userRepository.findOne({ where: { socialId: id } });
   }
 
   // 회원 정보 수정 // dto 참고, swagger로 해보기
