@@ -55,7 +55,7 @@ export class User {
     socialProvider:string;
 
     // 소셜로그인 고유ID
-    @Column({name:'social_id'})
+    @Column({ name: 'social_id' }) // 소셜로그인 고유 아이디
     socialId:string;
 
     // 등록날짜

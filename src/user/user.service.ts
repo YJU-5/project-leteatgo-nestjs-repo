@@ -146,7 +146,9 @@ export class UserService {
   // 본인 회원 정보 조회 
   async getProfile(socialId:string){
     // 컨트롤러에서 받은 소셜아이디로 유저를 찾기
-    return await this.userRepository.findOne({where:{socialId:socialId}})
+    return this.userRepository.findOne({ 
+    where: { socialId: socialId } // User 엔티티의 필드명 사용
+  });
   }
 
   // 회원 정보 조회

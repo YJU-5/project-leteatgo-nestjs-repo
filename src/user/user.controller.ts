@@ -77,52 +77,7 @@ export class UserController {
     return this.userService.restoreUser(socialId)
   }
 
-  // 본인 회원 정보 조회 
-  @Get()
-  @ApiOperationDecorator('본인 회원 정보 조회','# 본인 회원 정보 조회',201,'조회 완료')
-  @ApiBearerAuth()
-  async getProfile(@Req() req:RequestWithUser) {
-    
-    // 프론트엔드에서 회원복구 요청을 하였을 때 req로 jwt에 들어있는 정보를 추출 
-    const socialId = req.user.socialId
-
-    // userService의 getProfile에 추출한 소셜아이디 전송 
-    return this.userService.getProfile(socialId)
-  }
-
-  @Get(':id')
-  @ApiOperationDecorator('회원 정보 조회','# 회원 정보 조회',201,'조회 완료')
-  @ApiBearerAuth()
-  getuserProfile(@Param('id') userid:string){
-    return this.userService.getuserProfile(userid)
-  }
-
-  // 회원 정보 수정 
-  @Patch()
-  @ApiOperationDecorator('본인 회원 정보 수정','# 본인 회원 정보 수정',201,'수정 완료')
-  @ApiBearerAuth()
-  @ApiLoginUpdate()
-  async updateProfile(
-    @Req() req:RequestWithUser, // jwt 토큰정보
-    @Body() updateUserDto: UpdateUserDto, // 프론트엔드에서 어떤 정보를 어떻게 받아올지 
-    @UploadedFile() file: Express.Multer.File // 파일 받아오기 
-  ){
-    
-    let uploadedUrl:string =''
-    if(file){
-      uploadedUrl = await this.s3Service.uploadFile(file) // s3에 이미지 올리고 받아온 이미지 URL
-    }
-    const socialId = req.user.socialId // 소셜아이디 추출
-
-    // 업데이트할 정보들을 userSerivce.updateProfile에 전송 
-    return this.userService.updateProfile(
-      socialId,
-      updateUserDto,
-      uploadedUrl,
-    )
-  }
-
-  // 내가 개최한 채팅 목록 
+      // 내가 개최한 채팅 목록 
   @Get('hosted')
   @ApiOperationDecorator('내가 개최한 채팅 목록 조회','# 개최한 채팅 목록 조회',201,'조회 완료')
   @ApiBearerAuth()
@@ -159,5 +114,51 @@ export class UserController {
     const userChatJoinList = await this.userChatRoomService.userChatRoomJoin(user.id)
 
     return userChatJoinList
+  }
+
+  // 본인 회원 정보 조회 
+  @Get()
+  @ApiOperationDecorator('본인 회원 정보 조회','# 본인 회원 정보 조회',201,'조회 완료')
+  @ApiBearerAuth()
+  async getProfile(@Req() req:RequestWithUser) {
+    
+    // 프론트엔드에서 회원복구 요청을 하였을 때 req로 jwt에 들어있는 정보를 추출 
+    const socialId = req.user.socialId
+
+    // userService의 getProfile에 추출한 소셜아이디 전송 
+    return this.userService.getProfile(socialId)
+  }
+
+
+  @Get(':id')
+  @ApiOperationDecorator('회원 정보 조회','# 회원 정보 조회',201,'조회 완료')
+  @ApiBearerAuth()
+  getuserProfile(@Param('id') userid:string){
+    return this.userService.getuserProfile(userid)
+  }
+
+  // 회원 정보 수정 
+  @Patch()
+  @ApiOperationDecorator('본인 회원 정보 수정','# 본인 회원 정보 수정',201,'수정 완료')
+  @ApiBearerAuth()
+  @ApiLoginUpdate()
+  async updateProfile(
+    @Req() req:RequestWithUser, // jwt 토큰정보
+    @Body() updateUserDto: UpdateUserDto, // 프론트엔드에서 어떤 정보를 어떻게 받아올지 
+    @UploadedFile() file: Express.Multer.File // 파일 받아오기 
+  ){
+    
+    let uploadedUrl:string =''
+    if(file){
+      uploadedUrl = await this.s3Service.uploadFile(file) // s3에 이미지 올리고 받아온 이미지 URL
+    }
+    const socialId = req.user.socialId // 소셜아이디 추출
+
+    // 업데이트할 정보들을 userSerivce.updateProfile에 전송 
+    return this.userService.updateProfile(
+      socialId,
+      updateUserDto,
+      uploadedUrl,
+    )
   }
 }
