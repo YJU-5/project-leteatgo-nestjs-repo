@@ -33,7 +33,7 @@
         },
         {
           "name": "AWS_BUCKET_NAME",
-          "value": "nestjs-image-bucket"
+          "value": "leteatgo-s3-bucket"
         },
         {
           "name": "AWS_REGION",
