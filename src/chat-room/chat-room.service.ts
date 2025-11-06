@@ -69,7 +69,7 @@ export class ChatRoomService {
   async chatRoomFindAll() {
     const chatRooms = await this.chatRoomRepository.find({
       where: { status: 'IN_PROGRESS' }, // 현재 진행중인 채팅방
-      relations: ['hostId'] // 만든사람의 정보도 같이 불러오기 
+      relations: ['hostId', 'userChatRooms', 'categories'] // 만든사람의 정보, 참가자 정보, 카테고리 정보도 같이 불러오기
     })
     return chatRooms
   }
