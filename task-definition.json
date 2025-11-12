@@ -25,11 +25,11 @@
         },
         {
           "name": "FRONTEND_URL",
-          "value": "https://matchash.shop"
+          "value": "https://leteatgo.shop"
         },
         {
           "name": "CORS_ORIGIN",
-          "value": "https://matchash.shop"
+          "value": "https://leteatgo.shop"
         },
         {
           "name": "AWS_BUCKET_NAME",
@@ -41,11 +41,11 @@
         },
         {
           "name": "KAKAO_REDIRECT_URI",
-          "value": "https://matchash.shop/login/kakao"
+          "value": "https://leteatgo.shop/login/kakao"
         },
         {
           "name": "GOOGLE_REDIRECT_URI",
-          "value": "https://matchash.shop/login/google"
+          "value": "https://leteatgo.shop/login/google"
         }
       ],
       "secrets": [
