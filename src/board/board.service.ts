@@ -137,16 +137,23 @@ export class BoardService {
 
     // 이미지 업로드 처리
     if (files && files.length > 0) {
-      // 기존 이미지가 있다면 S3에서 삭제
-      if (board.picture_urls && board.picture_urls.length > 0) {
-        const deletePromises = board.picture_urls.map((url) =>
+      // 새 이미지 업로드
+      const newPictureUrls = await this.s3Service.uploadFiles(files);
+      
+      // 기존 이미지 URL 유지 + 새 이미지 URL 추가
+      const existingUrls = board.picture_urls || [];
+      board.picture_urls = [...existingUrls, ...newPictureUrls];
+      
+      // 최대 4개까지만 유지
+      if (board.picture_urls.length > 4) {
+        // 초과분 삭제 (오래된 것부터)
+        const urlsToDelete = board.picture_urls.slice(4);
+        const deletePromises = urlsToDelete.map((url) =>
           this.s3Service.deleteFile(url),
         );
         await Promise.all(deletePromises);
+        board.picture_urls = board.picture_urls.slice(0, 4);
       }
-
-      const pictureUrls = await this.s3Service.uploadFiles(files);
-      board.picture_urls = pictureUrls;
     }
 
     // 게시글 수정

@@ -95,15 +95,18 @@ export class CommentService {
       );
     }
 
-    // 욕설 검사
-    const contentCheck = await this.profanityService.checkProfanity(
-      updateCommentDto.content,
-    );
-    if (contentCheck.is_profanity) {
-      throw new BadRequestException('욕설이 포함된 댓글은 작성할 수 없습니다.');
-    }
+    // content가 제공된 경우에만 업데이트 및 욕설 검사
+    if (updateCommentDto.content !== undefined) {
+      // 욕설 검사
+      const contentCheck = await this.profanityService.checkProfanity(
+        updateCommentDto.content,
+      );
+      if (contentCheck.is_profanity) {
+        throw new BadRequestException('욕설이 포함된 댓글은 작성할 수 없습니다.');
+      }
 
-    comment.content = updateCommentDto.content;
+      comment.content = updateCommentDto.content;
+    }
 
     return this.commentRepository.save(comment);
   }

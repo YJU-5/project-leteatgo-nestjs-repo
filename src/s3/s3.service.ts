@@ -84,4 +84,74 @@ export class S3Service {
       throw new BadRequestException(`File upload failed: ${error.message}`);
     }
   }
+
+  // S3 여러 파일 업로드 (최대 4개)
+  async uploadFiles(files: Express.Multer.File[]): Promise<string[]> {
+    if (!files || files.length === 0) {
+      return [];
+    }
+
+    if (files.length > 4) {
+      throw new BadRequestException('최대 4개의 이미지만 업로드할 수 있습니다.');
+    }
+
+    const uploadPromises = files.map((file) => this.uploadFile(file));
+    return Promise.all(uploadPromises);
+  }
+
+  // S3 파일 삭제
+  async deleteFile(url: string): Promise<void> {
+    if (!url || typeof url !== 'string') {
+      console.warn('Invalid URL provided for deletion:', url);
+      return;
+    }
+
+    try {
+      // URL에서 파일 키 추출
+      // 형식: https://bucket-name.s3.region.amazonaws.com/file-key
+      // 또는: https://bucket-name.s3.ap-northeast-2.amazonaws.com/uuid-filename.jpg
+      let fileKey: string;
+      
+      if (url.includes('amazonaws.com/')) {
+        // 전체 URL인 경우
+        const urlParts = url.split('amazonaws.com/');
+        if (urlParts.length < 2) {
+          console.warn('Invalid S3 URL format:', url);
+          return;
+        }
+        fileKey = urlParts[1].split('?')[0]; // 쿼리 파라미터 제거
+      } else {
+        // 이미 파일 키만 있는 경우
+        fileKey = url;
+      }
+
+      if (!fileKey || fileKey.trim() === '') {
+        console.warn('Empty file key extracted from URL:', url);
+        return;
+      }
+
+      const params = {
+        Bucket: this.bucketName,
+        Key: fileKey.trim(),
+      };
+
+      const command = new DeleteObjectCommand(params);
+      await this.s3.send(command);
+      console.log(`Successfully deleted S3 file: ${fileKey}`);
+    } catch (error) {
+      console.error('S3 delete error:', error);
+      // 삭제 실패해도 계속 진행 (이미 삭제되었을 수 있음)
+      // 에러를 throw하지 않음으로써 다른 파일 삭제가 계속 진행되도록 함
+    }
+  }
+
+  // S3 여러 파일 삭제
+  async deleteFiles(urls: string[]): Promise<void> {
+    if (!urls || urls.length === 0) {
+      return;
+    }
+
+    const deletePromises = urls.map((url) => this.deleteFile(url));
+    await Promise.all(deletePromises);
+  }
 }
