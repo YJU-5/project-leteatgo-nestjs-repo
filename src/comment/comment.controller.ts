@@ -47,7 +47,7 @@ export class CommentController {
     @Body() createCommentDto: CreateCommentDto,
     @Req() req: any,
   ) {
-    return this.commentService.create(req.user.id, +boardId, createCommentDto);
+    return this.commentService.create(req.user.socialId, +boardId, createCommentDto);
   }
 
   @Public()

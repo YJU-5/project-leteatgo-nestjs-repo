@@ -39,12 +39,21 @@ export class CommentService {
       throw new NotFoundException('사용자를 찾을 수 없습니다.');
     }
 
-    // 욕설 검사
-    const contentCheck = await this.profanityService.checkProfanity(
-      createCommentDto.content,
-    );
-    if (contentCheck.is_profanity) {
-      throw new BadRequestException('욕설이 포함된 댓글은 작성할 수 없습니다.');
+    // 욕설 검사 (AI 서비스 실패 시 건너뛰기)
+    try {
+      const contentCheck = await this.profanityService.checkProfanity(
+        createCommentDto.content,
+      );
+      if (contentCheck.is_profanity) {
+        throw new BadRequestException('욕설이 포함된 댓글은 작성할 수 없습니다.');
+      }
+    } catch (error) {
+      console.error('욕설 검사 실패 (댓글 작성):', error);
+      // BadRequestException이면 그대로 throw (욕설 감지)
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      // AI 서비스 실패 시 욕설 검사를 건너뛰고 진행
     }
 
     const comment = new Comment();
@@ -97,12 +106,21 @@ export class CommentService {
 
     // content가 제공된 경우에만 업데이트 및 욕설 검사
     if (updateCommentDto.content !== undefined) {
-      // 욕설 검사
-      const contentCheck = await this.profanityService.checkProfanity(
-        updateCommentDto.content,
-      );
-      if (contentCheck.is_profanity) {
-        throw new BadRequestException('욕설이 포함된 댓글은 작성할 수 없습니다.');
+      // 욕설 검사 (AI 서비스 실패 시 건너뛰기)
+      try {
+        const contentCheck = await this.profanityService.checkProfanity(
+          updateCommentDto.content,
+        );
+        if (contentCheck.is_profanity) {
+          throw new BadRequestException('욕설이 포함된 댓글은 작성할 수 없습니다.');
+        }
+      } catch (error) {
+        console.error('욕설 검사 실패 (댓글 수정):', error);
+        // BadRequestException이면 그대로 throw (욕설 감지)
+        if (error instanceof BadRequestException) {
+          throw error;
+        }
+        // AI 서비스 실패 시 욕설 검사를 건너뛰고 진행
       }
 
       comment.content = updateCommentDto.content;

@@ -61,7 +61,8 @@ export class BoardController {
   @ApiBearerAuth()
   @ApiOperation({
     summary: '集まりの感想を書く',
-    description: 'ソーシャルダイニングの集まり後、写真と一緒に感想を記入します。',
+    description:
+      'ソーシャルダイニングの集まり後、写真と一緒に感想を記入します。',
   })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -99,17 +100,26 @@ export class BoardController {
     @UploadedFiles() files: Express.Multer.File[],
     @Res() res,
   ) {
-    const result = await this.boardService.create(
-      req.user.id,
-      createBoardDto,
-      files,
-    );
+    try {
+      const result = await this.boardService.create(
+        req.user.socialId, // socialId 사용
+        createBoardDto,
+        files,
+      );
 
-    if ((result as any).error) {
-      return res.status(400).json(result);
+      if ((result as any).error) {
+        return res.status(400).json(result);
+      }
+
+      return res.status(201).json(result);
+    } catch (error) {
+      console.error('Board creation error:', error);
+      return res.status(500).json({
+        statusCode: 500,
+        message: error.message || '게시글 작성 중 오류가 발생했습니다.',
+        error: 'Internal Server Error',
+      });
     }
-
-    return res.status(201).json(result);
   }
 
   @Patch(':id')
@@ -151,13 +161,54 @@ export class BoardController {
   @ApiResponse({ status: 401, description: '인증되지 않은 사용자' })
   @ApiResponse({ status: 403, description: '수정 권한 없음' })
   @ApiResponse({ status: 404, description: '해당 사진첩 찾을 수 없음' })
-  update(
+  async update(
     @Param('id') id: string,
     @Req() req: any,
     @Body() updateBoardDto: UpdateBoardDto,
     @UploadedFiles() files: Express.Multer.File[],
   ) {
-    return this.boardService.update(+id, req.user.id, updateBoardDto, files);
+    try {
+      // multipart/form-data에서 existingImageUrls를 직접 파싱
+      console.log('=== Board Update Controller ===');
+      console.log('req.body 전체:', JSON.stringify(req.body, null, 2));
+      console.log('req.body.existingImageUrls:', req.body?.existingImageUrls);
+      console.log(
+        'req.body.existingImageUrls 타입:',
+        typeof req.body?.existingImageUrls,
+      );
+
+      if (req.body && req.body.existingImageUrls) {
+        const existingImageUrlsValue = req.body.existingImageUrls;
+        console.log('existingImageUrls 받음:', existingImageUrlsValue);
+
+        // 문자열인 경우 그대로 전달 (서비스에서 JSON.parse)
+        // 배열인 경우 JSON.stringify로 변환
+        if (Array.isArray(existingImageUrlsValue)) {
+          updateBoardDto.existingImageUrls = JSON.stringify(
+            existingImageUrlsValue,
+          );
+        } else {
+          updateBoardDto.existingImageUrls = existingImageUrlsValue;
+        }
+        console.log(
+          '설정된 existingImageUrls:',
+          updateBoardDto.existingImageUrls,
+        );
+      } else {
+        console.log('existingImageUrls 없음 - 모든 기존 이미지 삭제로 간주');
+      }
+
+      // board.user.id는 UUID이므로 req.user.id (UUID)를 사용
+      return await this.boardService.update(
+        +id,
+        req.user.id,
+        updateBoardDto,
+        files,
+      );
+    } catch (error) {
+      console.error('Board update error:', error);
+      throw error;
+    }
   }
 
   @Delete(':id')
