@@ -156,6 +156,7 @@ export class ChatRoomGateway implements OnGatewayDisconnect {
       isSystem: true,
     });
 
+    console.log(userChatRoomGet.role)
     // 유저의 역할 보내기
     this.server.emit('role', `${userChatRoomGet.role}`);
   }

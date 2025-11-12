@@ -29,8 +29,8 @@ export class Review {
     description:string
 
     // 사진 
-    @Column({name:'picture_url',nullable:true})
-    pictureUrl:string;
+    @Column('text', { array: true, name: 'picture_url', nullable: true })
+    pictureUrl: string[];
 
     // 친절함 
     @Column({type:'smallint'})
