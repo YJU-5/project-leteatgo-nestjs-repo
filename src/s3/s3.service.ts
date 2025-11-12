@@ -84,4 +84,40 @@ export class S3Service {
       throw new BadRequestException(`File upload failed: ${error.message}`);
     }
   }
+
+    // S3 여러 파일 업로드 (최대 4개)
+  async uploadFiles(files: Express.Multer.File[]): Promise<string[]> {
+    if (!files || files.length === 0) {
+      return [];
+    }
+
+    if (files.length > 4) {
+      throw new BadRequestException('최대 4개의 이미지만 업로드할 수 있습니다.');
+    }
+
+        const uploadPromises = files.map((file) => this.uploadFile(file));
+    return Promise.all(uploadPromises);
+  }
+
+// S3 파일 삭제
+async deleteFile(fileUrl: string): Promise<void> {
+  try {
+    // URL에서 파일 키 추출
+    const urlParts = fileUrl.split("/");
+    const fileKey = urlParts[urlParts.length - 1];
+
+    const params = {
+      Bucket: this.bucketName,
+      Key: fileKey,
+    };
+
+    const command = new DeleteObjectCommand(params);
+    await this.s3.send(command);
+  } catch (error) {
+    throw new Error(`Failed to delete file: ${error.message}`);
+  }
+}
+  
+
+
 }

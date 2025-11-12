@@ -1,7 +1,7 @@
 import { User } from "src/user/entities/user.entity";
 import { Like } from 'src/like/entities/like.entity';
 import { Comment } from 'src/comment/entities/comment.entity';
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, JoinColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn } from "typeorm";
 
 @Entity()
 export class Board {
@@ -15,9 +15,9 @@ export class Board {
     @JoinColumn({ name: 'user_id' })
     user: User;
 
-    // 사진
-    @Column({ type: 'varchar', length: 255, nullable: true })
-    pictureUrl: string;
+    // 사진 URL 배열 (최대 4개)
+    @Column({ type: 'simple-array', nullable: true })
+    picture_urls: string[];
 
     // 제목
     @Column({ type: 'varchar', length: 255, nullable: false })
@@ -44,7 +44,7 @@ export class Board {
     createdAt: Date;
 
     // 수정날짜
-    @CreateDateColumn({name:'updated_at'})
+    @UpdateDateColumn({name:'updated_at'})
     updatedAt:Date;
 
     // Like와 조인
