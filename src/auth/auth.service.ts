@@ -12,9 +12,9 @@ export class AuthService {
 
   // # 구글로그인, JWT 발급 #
   async googleLogin(user) {
-    const { email, name, socialId, deleted } = user; // user.serivce의 구글로그인에서 받아온 user값
+    const { id, email, name, socialId, deleted, pictureUrl } = user; // user.serivce의 구글로그인에서 받아온 user값
 
-    const googlePayload = { email, name, socialId, deleted }; // user에서 추출해서 jwt토큰에 넣어줄 정보들
+    const googlePayload = { id, email, name, socialId, deleted, pictureUrl }; // user에서 추출해서 jwt토큰에 넣어줄 정보들
 
     const googleJwt = {
       token: this.jwtService.sign(googlePayload, {
@@ -27,9 +27,9 @@ export class AuthService {
   }
 
   async kakaoLogin(user) {
-    const { email, name, socialId, deleted } = user;
+    const { id, email, name, socialId, deleted, pictureUrl } = user;
 
-    const kakaoPayload = { email, name, socialId, deleted };
+    const kakaoPayload = { id, email, name, socialId, deleted, pictureUrl };
 
     const kakaoJwt = {
       token: this.jwtService.sign(kakaoPayload, {
