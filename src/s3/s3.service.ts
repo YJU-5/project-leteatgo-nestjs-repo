@@ -1,17 +1,13 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
-import { file } from 'googleapis/build/src/apis/file';
-import { Multer } from 'multer';
+import { randomUUID } from 'node:crypto';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import {
-  S3Client,
-  PutObjectCommand,
-  ObjectCannedACL,
   DeleteObjectCommand,
+  ObjectCannedACL,
+  PutObjectCommand,
+  S3Client,
+  S3ClientConfig,
   S3ServiceException,
 } from '@aws-sdk/client-s3';
-import { v4 as uuidv4 } from 'uuid';
-import * as dotenv from 'dotenv';
-
-dotenv.config(); // .env 파일을 로드
 
 @Injectable()
 export class S3Service {
@@ -19,56 +15,54 @@ export class S3Service {
   private readonly bucketName: string;
 
   constructor() {
-    // 필수 환경 변수 검증
-    if (!process.env.AWS_ACCESS_KEY_ID) {
-      throw new Error('AWS_ACCESS_KEY_ID is not defined');
-    }
-    if (!process.env.AWS_SECRET_ACCESS_KEY) {
-      throw new Error('AWS_SECRET_ACCESS_KEY is not defined');
-    }
-    if (!process.env.AWS_REGION) {
+    const region = process.env.AWS_REGION;
+    const bucketName = process.env.AWS_BUCKET_NAME;
+
+    if (!region) {
       throw new Error('AWS_REGION is not defined');
     }
-    if (!process.env.AWS_BUCKET_NAME) {
+    if (!bucketName) {
       throw new Error('AWS_BUCKET_NAME is not defined');
     }
 
-    this.bucketName = process.env.AWS_BUCKET_NAME;
+    this.bucketName = bucketName;
 
-    this.s3 = new S3Client({
-      region: process.env.AWS_REGION,
-      credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-      },
-    });
+    const config: S3ClientConfig = { region };
+    const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+    const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+
+    if (accessKeyId && secretAccessKey) {
+      config.credentials = { accessKeyId, secretAccessKey };
+    }
+
+    this.s3 = new S3Client(config);
   }
-  // S3 파일 업로드
+
   async uploadFile(file: Express.Multer.File): Promise<string> {
     if (!file) {
       throw new BadRequestException('No file provided');
     }
 
     try {
-      file.originalname = Buffer.from(file.originalname, 'ascii').toString(
-        'utf-8',
+      const originalName = Buffer.from(file.originalname, 'latin1').toString(
+        'utf8',
       );
-      const fileKey = `${uuidv4()}-${file.originalname}`;
+      const fileKey = `${randomUUID()}-${originalName}`;
 
-      const params = {
-        Bucket: this.bucketName,
-        Key: fileKey,
-        Body: file.buffer,
-        ACL: ObjectCannedACL.public_read,
-        ContentType: file.mimetype,
-      };
-
-      const command = new PutObjectCommand(params);
-      await this.s3.send(command);
+      await this.s3.send(
+        new PutObjectCommand({
+          Bucket: this.bucketName,
+          Key: fileKey,
+          Body: file.buffer,
+          ACL: ObjectCannedACL.public_read,
+          ContentType: file.mimetype,
+        }),
+      );
 
       return `https://${this.bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileKey}`;
     } catch (error) {
       console.error('S3 upload error:', error);
+
       if (error instanceof S3ServiceException) {
         switch (error.name) {
           case 'InvalidAccessKeyId':
@@ -81,43 +75,44 @@ export class S3Service {
             throw new BadRequestException(`S3 upload failed: ${error.message}`);
         }
       }
-      throw new BadRequestException(`File upload failed: ${error.message}`);
+
+      const message =
+        error instanceof Error ? error.message : 'Unknown upload error';
+      throw new BadRequestException(`File upload failed: ${message}`);
     }
   }
 
-    // S3 여러 파일 업로드 (최대 4개)
   async uploadFiles(files: Express.Multer.File[]): Promise<string[]> {
     if (!files || files.length === 0) {
       return [];
     }
 
     if (files.length > 4) {
-      throw new BadRequestException('최대 4개의 이미지만 업로드할 수 있습니다.');
+      throw new BadRequestException('A maximum of four images can be uploaded.');
     }
 
-        const uploadPromises = files.map((file) => this.uploadFile(file));
-    return Promise.all(uploadPromises);
+    return Promise.all(files.map((file) => this.uploadFile(file)));
   }
 
-// S3 파일 삭제
-async deleteFile(fileUrl: string): Promise<void> {
-  try {
-    // URL에서 파일 키 추출
-    const urlParts = fileUrl.split("/");
-    const fileKey = urlParts[urlParts.length - 1];
+  async deleteFile(fileUrl: string): Promise<void> {
+    try {
+      const pathname = new URL(fileUrl).pathname;
+      const fileKey = decodeURIComponent(pathname.replace(/^\//, ''));
 
-    const params = {
-      Bucket: this.bucketName,
-      Key: fileKey,
-    };
+      if (!fileKey) {
+        throw new Error('The file URL does not contain an object key');
+      }
 
-    const command = new DeleteObjectCommand(params);
-    await this.s3.send(command);
-  } catch (error) {
-    throw new Error(`Failed to delete file: ${error.message}`);
+      await this.s3.send(
+        new DeleteObjectCommand({
+          Bucket: this.bucketName,
+          Key: fileKey,
+        }),
+      );
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Unknown deletion error';
+      throw new Error(`Failed to delete file: ${message}`);
+    }
   }
-}
-  
-
-
 }
