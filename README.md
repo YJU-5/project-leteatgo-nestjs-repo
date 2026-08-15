@@ -1,172 +1,129 @@
-# OPEN CHAT
-# 🌿 브랜치 네이밍 규칙
-## ✅ 기본 규칙
-- **소문자 사용** (대문자 X)
-- **공백 대신 하이픈(`-`) 사용**
-- **브랜치 타입/설명 형식** 유지
+# Let Eat Go API
 
----
+> Let Eat Goの認証、ソーシャルダイニング、チャット、コミュニティ機能を提供するNestJS API
 
-## 🏛 기본 브랜치
-- `main` 또는 `master` → 제품의 **안정적인 배포 버전**
-
----
-
-## 🛠 기능 개발 브랜치 (Feature)
-- **형식:** `feature/기능명`
-- **예시:**  
-  - `feature/login-page`
-  - `feature/search-bar`
-
----
-
-## 🐞 버그 수정 브랜치 (Bugfix)
-- **형식:** `bugfix/버그명`
-- **예시:**  
-  - `bugfix/fix-login-error`
-  - `bugfix/typo-fix`
-
----
-
-## 🎨 스타일 수정 브랜치 (Style)
-- **형식:** `style/수정대상`
-- **예시:**  
-  - `style/update-button-ui`
-  - `style/fix-css-padding`
-
----
-
-## 🚨 긴급 수정 브랜치 (Hotfix)
-- **형식:** `hotfix/수정내용`
-- **예시:**  
-  - `hotfix/critical-security-fix`
-  - `hotfix/fix-500-error`
-
----
-
-## 🔄 리팩토링 브랜치 (Refactoring)
-- **형식:** `refactoring/리팩토링-대상`
-- **예시:**  
-  - `refactoring/improve-api-structure`
-  - `refactoring/optimize-db-queries`
-
----
-
-## 🧪 실험 브랜치 (Experimental)
-- **형식:** `experiment/실험내용`
-- **예시:**  
-  - `experiment/new-algorithm`
-  - `experiment/ui-redesign`
-
----
-
-## 🔀 병합 브랜치 (Merge)
-- **형식:** `merge/병합-설명`
-- **예시:**
-  - `merge/feature-user-auth  → 여러 기능 브랜치 병합`
-  - `merge/bugfix-auth-errors → 여러 버그 픽스 병합`
-  - `merge/hotfix-security-patch → 긴급 수정 병합`
-
----
-
-📌 **규칙을 지켜 브랜치를 생성하면 협업이 더 원활해집니다! 🚀**
-
-<!-- <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+<p align="center">
+  <img src="https://img.shields.io/badge/NestJS-11-E0234E?logo=nestjs" alt="NestJS 11" />
+  <img src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" alt="TypeScript 5" />
+  <img src="https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/Socket.IO-010101?logo=socketdotio" alt="Socket.IO" />
+  <img src="https://img.shields.io/badge/AWS-S3%20%7C%20ECS%20%7C%20ECR-FF9900?logo=amazonwebservices&logoColor=white" alt="AWS" />
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## About
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+This repository contains the backend API for [Let Eat Go](https://github.com/YJU-5/project-leteatgo-nextjs-repo), a social dining platform that helps people create, discover, and join dining events.
 
-<!-- ## Description
+The API is organized into feature modules and provides JWT authentication, Google/Kakao social login, real-time chat, community posts, reviews, notifications, image storage, and an AI-assisted profanity check.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Related Services
 
-## Project setup
+| Service | Responsibility | Repository |
+| --- | --- | --- |
+| Web Client | UI, maps, authentication flow, chat, internationalization | [project-leteatgo-nextjs-repo](https://github.com/YJU-5/project-leteatgo-nextjs-repo) |
+| Backend API | REST API, authentication, WebSocket, domain logic, database and S3 | **This repository** |
+| AI Service | DistilBERT-based text classification API | [ai-service](https://github.com/YJU-5/ai-service) |
 
-```bash
-$ npm install
+## Responsibilities
+
+- Google and Kakao social login with JWT-based authorization
+- Social dining event creation, discovery, participation, and participant management
+- Real-time event chat through a Socket.IO gateway
+- Community posts, comments, likes, and image uploads
+- Reviews, profiles, subscriptions, and notifications
+- PostgreSQL persistence through TypeORM
+- Amazon S3 image upload and deletion
+- AI service integration for profanity classification
+- Swagger/OpenAPI documentation
+
+## Architecture
+
+```mermaid
+flowchart TD
+    Web[Next.js Web Client] -->|REST / JWT| API[NestJS API]
+    Web <-->|Socket.IO| API
+    API --> DB[(PostgreSQL)]
+    API --> S3[Amazon S3]
+    API --> AI[FastAPI AI Service]
 ```
 
-## Compile and run the project
+## Modules
+
+| Module | Responsibility |
+| --- | --- |
+| `auth`, `user` | Social login, JWT validation, user profiles |
+| `chat-room`, `chat-participant`, `message` | Dining events and real-time chat |
+| `board`, `comment`, `like` | Album and community interactions |
+| `review` | Post-event reviews |
+| `subscription`, `notification` | Follow relationships and notifications |
+| `restaurant`, `category`, `tag` | Event discovery metadata |
+| `s3` | Image storage |
+| `profanity` | AI service integration |
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 20+
+- npm 10+
+- PostgreSQL 15+
+- Optional: AWS credentials and an S3 bucket for image uploads
+- Optional: a running [Let Eat Go AI Service](https://github.com/YJU-5/ai-service)
+
+### Installation
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+git clone https://github.com/YJU-5/project-leteatgo-nestjs-repo.git
+cd project-leteatgo-nestjs-repo
+npm ci
+cp .env.example .env
+npm run start:dev
 ```
 
-## Run tests
+The API starts at [http://localhost:3001/api](http://localhost:3001/api). Swagger documentation is available at [http://localhost:3001/docs](http://localhost:3001/docs).
 
-```bash
-# unit tests
-$ npm run test
+## Environment Variables
 
-# e2e tests
-$ npm run test:e2e
+| Variable | Required | Description |
+| --- | --- | --- |
+| `PORT` | No | HTTP port; defaults to `3001` |
+| `CORS_ORIGINS` | No | Comma-separated allowed frontend origins |
+| `DB_HOST` | Yes | PostgreSQL host |
+| `DB_PORT` | Yes | PostgreSQL port |
+| `DB_USERNAME` | Yes | PostgreSQL user |
+| `DB_PASSWORD` | Yes | PostgreSQL password |
+| `DB_DATABASE_NAME` | Yes | PostgreSQL database |
+| `DB_SYNCHRONIZE` | No | Set to `true` only for disposable local databases |
+| `JWT_SECRET` | Yes | JWT signing secret |
+| `AWS_REGION` | For S3 | AWS region |
+| `AWS_BUCKET_NAME` | For S3 | S3 bucket name |
+| `AWS_ACCESS_KEY_ID` | Local S3 only | Optional local credential; ECS can use its task role |
+| `AWS_SECRET_ACCESS_KEY` | Local S3 only | Optional local credential; ECS can use its task role |
+| `AI_SERVICE_URL` | No | AI service URL; defaults to `http://localhost:8000` |
 
-# test coverage
-$ npm run test:cov
-```
+## Commands
+
+| Command | Purpose |
+| --- | --- |
+| `npm run start:dev` | Start the API in watch mode |
+| `npm run build` | Compile the TypeScript application |
+| `npm test` | Run unit tests |
+| `npm run test:e2e` | Run end-to-end tests |
+| `npm run test:cov` | Generate a coverage report |
+| `npm run lint` | Run ESLint |
 
 ## Deployment
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+The Docker image uses a multi-stage Node.js 20 Alpine build. The deployment workflow builds the image, pushes it to Amazon ECR, and updates the service running on Amazon ECS.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Deployment credentials must be stored in GitHub Actions secrets or provided through an AWS IAM role. Never commit credentials or generated ECS task definitions.
 
-```bash
-$ npm install -g mau
-$ mau deploy
-```
+## Contribution Highlight — @lemonwasp
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+[@lemonwasp](https://github.com/lemonwasp) contributed to the initial entity design, authentication flow, album backend, chat-room relationships, Comment DTO fixes, and S3 image deletion behavior.
 
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+See the [contribution history](https://github.com/YJU-5/project-leteatgo-nestjs-repo/commits/main/?author=lemonwasp).
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE). --> -->
+This repository was created as an educational team project. No open-source license has been declared.
