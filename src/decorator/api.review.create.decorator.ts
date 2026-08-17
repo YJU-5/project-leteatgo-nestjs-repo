@@ -1,5 +1,5 @@
 import { applyDecorators, UseInterceptors } from '@nestjs/common';
-import { ApiConsumes, ApiBody, ApiParam } from '@nestjs/swagger';
+import { ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { CreateReviewDto } from 'src/review/dto/create-review.dto';
 

@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CreateChatParticipantDto } from './dto/create-chat-participant.dto';
-import { UpdateChatParticipantDto } from './dto/update-chat-participant.dto';
 import { ChatParticipant } from './entities/chat-participant.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { privateDecrypt } from 'crypto';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -37,7 +34,7 @@ export class ChatParticipantService {
 
   // 참가한 채팅방 목록 삭제 
   async chatParticipantDeleteUser(userId,chatRoomId){
-    const deleteUser = await this.chatParticipant.delete({
+    await this.chatParticipant.delete({
       userId:userId,
       chatRoomId:chatRoomId,
     })

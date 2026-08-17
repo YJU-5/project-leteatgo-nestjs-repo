@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/swagger';
 import { CreateBoardDto } from './create-board.dto';
-import { IsOptional, IsArray, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateBoardDto extends PartialType(CreateBoardDto) {

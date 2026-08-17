@@ -1,7 +1,6 @@
 import { ChatRoom } from "src/chat-room/entities/chat-room.entity";
 import { User } from "src/user/entities/user.entity";
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { deflate } from "zlib";
 
 @Entity()
 export class UserChatRoom {

@@ -21,7 +21,6 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { S3Module } from './s3/s3.module';
 import { ProfanityModule } from './profanity/profanity.module';
-import { ChatRoomGateway } from './chat-room/chat-room.gateway';
 
 @Module({
   imports: [

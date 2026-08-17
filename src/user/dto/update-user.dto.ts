@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsString } from "class-validator";
 // # 수정 : 사진, 주소,  
 export class UpdateUserDto {
     @ApiProperty({ example: 'your name', required: false })

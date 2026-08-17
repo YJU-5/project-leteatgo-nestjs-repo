@@ -6,8 +6,6 @@ import { ChatRoom } from './entities/chat-room.entity';
 import { Repository } from 'typeorm';
 import { UserService } from 'src/user/user.service';
 import { UserChatRoomService } from 'src/user-chat-room/user-chat-room.service';
-import { ChatRoomGateway } from './chat-room.gateway';
-import { ChatParticipantService } from 'src/chat-participant/chat-participant.service';
 
 @Injectable()
 export class ChatRoomService {
