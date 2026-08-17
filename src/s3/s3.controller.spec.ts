@@ -9,7 +9,9 @@ describe('S3Controller', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [S3Controller],
       providers: [S3Service],
-    }).compile();
+    })
+      .useMocker(() => ({}))
+      .compile();
 
     controller = module.get<S3Controller>(S3Controller);
   });

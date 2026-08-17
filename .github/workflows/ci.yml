@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   validate:
-    name: Build and health tests
+    name: Build and unit tests
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -35,5 +35,5 @@ jobs:
       - name: Build application
         run: npm run build
 
-      - name: Run health endpoint tests
-        run: npm run test:health
+      - name: Run unit tests
+        run: npm test -- --runInBand

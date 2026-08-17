@@ -9,9 +9,13 @@ describe('ChatParticipantController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ChatParticipantController],
       providers: [ChatParticipantService],
-    }).compile();
+    })
+      .useMocker(() => ({}))
+      .compile();
 
-    controller = module.get<ChatParticipantController>(ChatParticipantController);
+    controller = module.get<ChatParticipantController>(
+      ChatParticipantController,
+    );
   });
 
   it('should be defined', () => {

@@ -90,6 +90,12 @@
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/$1"
+    },
+    "setupFiles": [
+      "<rootDir>/test/setup-env.ts"
+    ],
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
