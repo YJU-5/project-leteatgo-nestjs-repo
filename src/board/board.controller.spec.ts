@@ -9,7 +9,9 @@ describe('BoardController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [BoardController],
       providers: [BoardService],
-    }).compile();
+    })
+      .useMocker(() => ({}))
+      .compile();
 
     controller = module.get<BoardController>(BoardController);
   });

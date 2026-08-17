@@ -9,7 +9,9 @@ describe('ChatRoomController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ChatRoomController],
       providers: [ChatRoomService],
-    }).compile();
+    })
+      .useMocker(() => ({}))
+      .compile();
 
     controller = module.get<ChatRoomController>(ChatRoomController);
   });

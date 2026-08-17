@@ -7,7 +7,9 @@ describe('ReviewService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [ReviewService],
-    }).compile();
+    })
+      .useMocker(() => ({}))
+      .compile();
 
     service = module.get<ReviewService>(ReviewService);
   });

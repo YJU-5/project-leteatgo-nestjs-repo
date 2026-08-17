@@ -9,7 +9,9 @@ describe('LikeController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [LikeController],
       providers: [LikeService],
-    }).compile();
+    })
+      .useMocker(() => ({}))
+      .compile();
 
     controller = module.get<LikeController>(LikeController);
   });
