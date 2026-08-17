@@ -8,6 +8,7 @@
   <img src="https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL" />
   <img src="https://img.shields.io/badge/Socket.IO-010101?logo=socketdotio" alt="Socket.IO" />
   <img src="https://img.shields.io/badge/AWS-S3%20%7C%20ECS%20%7C%20ECR-FF9900?logo=amazonwebservices&logoColor=white" alt="AWS" />
+  <a href="https://github.com/YJU-5/project-leteatgo-nestjs-repo/actions/workflows/ci.yml"><img src="https://github.com/YJU-5/project-leteatgo-nestjs-repo/actions/workflows/ci.yml/badge.svg" alt="Backend CI" /></a>
 </p>
 
 ## About
@@ -82,6 +83,8 @@ npm run start:dev
 
 The API starts at [http://localhost:3001/api](http://localhost:3001/api). Swagger documentation is available at [http://localhost:3001/docs](http://localhost:3001/docs).
 
+A public liveness endpoint is available at [`GET /api/health`](http://localhost:3001/api/health). It returns `{ "status": "ok" }` without requiring JWT authentication or a database query.
+
 ## Environment Variables
 
 | Variable | Required | Description |
@@ -108,6 +111,7 @@ The API starts at [http://localhost:3001/api](http://localhost:3001/api). Swagge
 | `npm run start:dev` | Start the API in watch mode |
 | `npm run build` | Compile the TypeScript application |
 | `npm test` | Run unit tests |
+| `npm run test:health` | Run the public health endpoint tests |
 | `npm run test:e2e` | Run end-to-end tests |
 | `npm run test:cov` | Generate a coverage report |
 | `npm run lint` | Run ESLint |
