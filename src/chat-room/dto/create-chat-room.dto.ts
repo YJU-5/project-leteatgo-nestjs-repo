@@ -1,4 +1,4 @@
-import { ApiOperation, ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from "@nestjs/swagger";
 import { IsNumber, IsString, IsOptional, IsEnum, IsDate } from "class-validator";
 
 export class CreateChatRoomDto {

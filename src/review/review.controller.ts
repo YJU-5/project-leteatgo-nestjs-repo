@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Req, UseGuards, UnauthorizedException, InternalServerErrorException, UploadedFiles, ValidationPipe, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UnauthorizedException, InternalServerErrorException, UploadedFiles } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
@@ -7,11 +7,9 @@ import { ApiReviewCreate } from 'src/decorator/api.review.create.decorator';
 import { Public } from 'src/decorator/public.decorator';
 import { S3Service } from 'src/s3/s3.service';
 import { RequestWithUser } from 'src/user/request.interface';
-import { ApiBearerAuth, ApiOperation, ApiParam } from '@nestjs/swagger';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { UserService } from 'src/user/user.service';
 import { UserChatRoomService } from 'src/user-chat-room/user-chat-room.service';
-import { isUUID } from 'class-validator';
-import { AuthGuard } from '@nestjs/passport';
 
 
 @Controller('review')
@@ -126,7 +124,7 @@ export class ReviewController {
           files.map((file) => this.s3Service.uploadFile(file)),
         )
 
-      } catch (error) {
+      } catch {
 
         throw new InternalServerErrorException('파일 업로드 실패');
       }

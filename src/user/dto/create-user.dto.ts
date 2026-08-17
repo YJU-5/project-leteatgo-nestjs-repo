@@ -1,4 +1,4 @@
-import { IsDate, IsEmail, IsEnum, IsOptional, IsString, IsTaxId } from "class-validator";
+import { IsEmail, IsEnum, IsOptional, IsString } from "class-validator";
 
 export class CreateUserDto {
     

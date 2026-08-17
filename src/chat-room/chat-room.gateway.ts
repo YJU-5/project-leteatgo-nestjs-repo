@@ -1,7 +1,6 @@
 import {
   ConnectedSocket,
   MessageBody,
-  OnGatewayConnection,
   OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
@@ -13,8 +12,6 @@ import { UserChatRoomService } from 'src/user-chat-room/user-chat-room.service';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { MessageService } from 'src/message/message.service';
-import { Client } from 'socket.io/dist/client';
-import { Message } from 'src/message/entities/message.entity';
 
 @WebSocketGateway({ namespace: '/api/chat-room/join', cors: { origin: '*' } })
 export class ChatRoomGateway implements OnGatewayDisconnect {
@@ -250,7 +247,7 @@ export class ChatRoomGateway implements OnGatewayDisconnect {
   // role이 USER인 사람에게만 요청하기
   @SubscribeMessage('requestReview')
   async handleReview(
-    @ConnectedSocket() Client: Socket,
-    @MessageBody() chatRoomId: string,
+    @ConnectedSocket() _client: Socket,
+    @MessageBody() _chatRoomId: string,
   ) {}
 }

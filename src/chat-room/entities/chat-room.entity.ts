@@ -5,7 +5,7 @@ import { Review } from "src/review/entities/review.entity";
 import { Tag } from "src/tag/entities/tag.entity";
 import { UserChatRoom } from "src/user-chat-room/entities/user-chat-room.entity";
 import { User } from "src/user/entities/user.entity";
-import { Column,UpdateDateColumn, Entity, ManyToOne, PrimaryColumn,PrimaryGeneratedColumn, CreateDateColumn, JoinColumn, OneToMany, ManyToMany } from "typeorm";
+import { Column,UpdateDateColumn, Entity, ManyToOne,PrimaryGeneratedColumn, CreateDateColumn, JoinColumn, OneToMany, ManyToMany } from "typeorm";
 import { Restaurant } from 'src/restaurant/entities/restaurant.entity';
 
 @Entity()

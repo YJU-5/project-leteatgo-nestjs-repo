@@ -1,6 +1,4 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateSubscriptionDto } from './dto/create-subscription.dto';
-import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { Subscription } from './entities/subscription.entity';

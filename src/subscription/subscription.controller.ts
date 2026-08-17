@@ -1,7 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common';
+import { Controller, Get, Post, Param, Delete, Req } from '@nestjs/common';
 import { SubscriptionService } from './subscription.service';
-import { Public } from 'src/decorator/public.decorator';
-import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
 import { RequestWithUser } from 'src/user/request.interface';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 
