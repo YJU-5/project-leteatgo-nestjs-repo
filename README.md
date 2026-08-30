@@ -1,5 +1,7 @@
 # Let Eat Go API
 
+**English** | [日本語](README.ja.md)
+
 > Let Eat Goの認証、ソーシャルダイニング、チャット、コミュニティ機能を提供するNestJS API
 
 <p align="center">
